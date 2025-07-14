@@ -1,16 +1,22 @@
 class Endpoints {
-  static const String baseUrl = 'https://api.example.com';
+  static const String baseUrl = 'http://192.168.18.77:8000';
+
+  // ifconfig en0
+  // 192.168.18.77
+
+  // laravel server
+  // php artisan serve --host=0.0.0.0
 
   // Auth
-  static const String login = '$baseUrl/auth/login';
-  static const String register = '$baseUrl/auth/register';
-  static const String refreshToken = '$baseUrl/auth/refresh-token';
-  static const String logout = '$baseUrl/auth/logout';
+  static String get login => '$baseUrl/api/auth/login';
+  static String get register => '$baseUrl/api/auth/register';
+  static String get refreshToken => '$baseUrl/api/auth/refresh-token';
+  static String get logout => '$baseUrl/api/auth/logout';
 
   // User
-  static const String getUser = '$baseUrl/user/me';
-  static const String updateUser = '$baseUrl/user/me';
-  static const String changePassword = '$baseUrl/user/change-password';
-  static const String forgotPassword = '$baseUrl/user/forgot-password';
+  static String get getUser => '$baseUrl/api/user/me';
+  static String get updateUser => '$baseUrl/api/user/me';
+  static String get changePassword => '$baseUrl/api/user/change-password';
+  static String get forgotPassword => '$baseUrl/api/user/forgot-password';
   
 }

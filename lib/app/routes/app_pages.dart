@@ -30,11 +30,15 @@ class AppPages {
     GetPage(
       name: _Paths.ONBOARDING,
       page: () => const OnboardingView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
       binding: OnboardingBinding(),
     ),
     GetPage(
       name: _Paths.AUTH,
       page: () => const AuthView(),
+      transition: Transition.rightToLeft,
+      transitionDuration: const Duration(milliseconds: 300),
       binding: AuthBinding(),
     ),
   ];
