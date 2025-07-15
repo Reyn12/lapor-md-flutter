@@ -4,6 +4,7 @@ import '../services/auth_service.dart';
 import '../models/user_model.dart';
 import '../../../routes/app_pages.dart';
 import '../../../widgets/loading_dialog.dart';
+import '../../../../utils/storage_utils.dart';
 
 class AuthController extends GetxController {
   // Service
@@ -16,9 +17,13 @@ class AuthController extends GetxController {
   // Form key untuk validation
   final formKey = GlobalKey<FormState>();
 
+  // Observable user data
+  final Rx<User?> currentUser = Rx<User?>(null);
+
   @override
   void onInit() {
     super.onInit();
+    _loadSavedLoginInput();
   }
 
   @override
@@ -31,6 +36,32 @@ class AuthController extends GetxController {
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
+  }
+
+  // Method untuk load input login yang disimpan
+  void _loadSavedLoginInput() {
+    final savedInput = StorageUtils.getValue<Map<String, dynamic>>('input_login');
+    if (savedInput != null) {
+      emailController.text = savedInput['email'] ?? '';
+      passwordController.text = savedInput['password'] ?? '';
+      print('✅ Loaded saved login input');
+    }
+  }
+
+  // Method untuk save input login
+  void _saveLoginInput() async {
+    final inputData = {
+      'email': emailController.text.trim(),
+      'password': passwordController.text,
+    };
+    await StorageUtils.setValue('input_login', inputData);
+    print('💾 Saved login input');
+  }
+
+  // Method untuk hapus input login yang disimpan
+  void _clearSavedLoginInput() async {
+    await StorageUtils.removeKey('input_login');
+    print('🗑️ Cleared saved login input');
   }
 
   // Method untuk login
@@ -48,6 +79,9 @@ class AuthController extends GetxController {
     }
 
     try {
+      // Save input untuk testing
+      _saveLoginInput();
+      
       // Show loading
       showLoading();
 
@@ -62,23 +96,45 @@ class AuthController extends GetxController {
       // Hide loading
       hideLoading();
 
-      if (result.success) {
+      if (result['success'] == true) {
+        // Parse user data dari response
+        final userData = result['data']['user'];
+        final user = User.fromJson(userData);
+        
+        // Set current user
+        currentUser.value = user;
+        
+        // Simpen tokens ke GetStorage
+        await StorageUtils.setValue('access_token', result['data']['access_token']);
+        await StorageUtils.setValue('refresh_token', result['data']['refresh_token']);
+        
+        // Simpen user data juga
+        await StorageUtils.setValue('user_data', user.toJson());
+        
+        // Hapus saved input login kalo berhasil (comment dulu)
+        // _clearSavedLoginInput();
+        
+        print('✅ Login berhasil!');
+        print('👤 User: ${user.nama} (${user.email})');
+        StorageUtils.printAllStorage();
+
         // Login berhasil
         Get.snackbar(
           'Berhasil',
-          result.message,
+          result['message'] ?? 'Login berhasil',
           backgroundColor: Colors.green[100],
           colorText: Colors.green[800],
           snackPosition: SnackPosition.TOP,
         );
 
-        // Navigate to home
-        Get.offNamed(Routes.HOME);
+        // Navigate to Dashboard Warga
+        print("Coming Soon Navigate to Dashboard Warga");
+        // Get.offNamed(Routes.HOME);
       } else {
         // Login gagal
         Get.snackbar(
           'Login Gagal',
-          result.message,
+          result['message'] ?? 'Login gagal',
           backgroundColor: Colors.red[100],
           colorText: Colors.red[800],
           snackPosition: SnackPosition.TOP,
@@ -118,16 +174,15 @@ class AuthController extends GetxController {
       // Hide loading
       hideLoading();
 
-      if (result.success) {
+      if (result['success'] == true) {
         // Register berhasil
         Get.snackbar(
           'Berhasil',
-          result.message,
+          result['message'] ?? 'Registrasi berhasil',
           backgroundColor: Colors.green[100],
           colorText: Colors.green[800],
           snackPosition: SnackPosition.TOP,
         );
-
 
         // Navigate to home
         Get.offNamed(Routes.HOME);
@@ -135,7 +190,7 @@ class AuthController extends GetxController {
         // Register gagal
         Get.snackbar(
           'Registrasi Gagal',
-          result.message,
+          result['message'] ?? 'Registrasi gagal',
           backgroundColor: Colors.red[100],
           colorText: Colors.red[800],
           snackPosition: SnackPosition.TOP,
@@ -159,9 +214,10 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     try {
       // Clear user data
-      // currentUser.value = null;
-      // accessToken.value = '';
-      // refreshToken.value = '';
+      currentUser.value = null;
+      
+      // Clear tokens dan user data dari storage
+      await StorageUtils.clearAll();
       
       // Clear form
       emailController.clear();

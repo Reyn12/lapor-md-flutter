@@ -5,7 +5,7 @@ import '../models/user_model.dart';
 
 class AuthService {
   // Method untuk login
-  Future<LoginResponse> login({
+  Future<Map<String, dynamic>> login({
     required String email,
     required String password,
   }) async {
@@ -29,26 +29,26 @@ class AuthService {
       if (response.statusCode == 200) {
         // Parse response langsung dari API
         final data = jsonDecode(response.body);
-        return LoginResponse.fromJson(data);
+        return data;
       } else if (response.statusCode == 401) {
         // Parse error response dari API
         final data = jsonDecode(response.body);
-        return LoginResponse.fromJson(data);
+        return data;
       } else if (response.statusCode == 422) {
-        return LoginResponse(
-          success: false,
-          message: 'Data tidak valid',
-        );
+        return {
+          'success': false,
+          'message': 'Data tidak valid',
+        };
       } else if (response.statusCode == 500) {
-        return LoginResponse(
-          success: false,
-          message: 'Server error, coba lagi nanti',
-        );
+        return {
+          'success': false,
+          'message': 'Server error, coba lagi nanti',
+        };
       } else {
-        return LoginResponse(
-          success: false,
-          message: 'Login gagal: ${response.reasonPhrase}',
-        );
+        return {
+          'success': false,
+          'message': 'Login gagal: ${response.reasonPhrase}',
+        };
       }
     } catch (e) {
       print('❌ Error: $e');
@@ -60,15 +60,15 @@ class AuthService {
         errorMessage = 'Koneksi timeout, coba lagi';
       }
 
-      return LoginResponse(
-        success: false,
-        message: errorMessage,
-      );
+      return {
+        'success': false,
+        'message': errorMessage,
+      };
     }
   }
 
   // Method untuk register (bonus)
-  Future<LoginResponse> register({
+  Future<Map<String, dynamic>> register({
     required String email,
     required String password,
     required String name,
@@ -94,28 +94,28 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Parse response langsung dari API
         final data = jsonDecode(response.body);
-        return LoginResponse.fromJson(data);
+        return data;
       } else if (response.statusCode == 422) {
         // Parse error response dari API
         final data = jsonDecode(response.body);
-        return LoginResponse.fromJson(data);
+        return data;
       } else if (response.statusCode == 400) {
-        return LoginResponse(
-          success: false,
-          message: 'Data tidak valid',
-        );
+        return {
+          'success': false,
+          'message': 'Data tidak valid',
+        };
       } else {
-        return LoginResponse(
-          success: false,
-          message: 'Registrasi gagal: ${response.reasonPhrase}',
-        );
+        return {
+          'success': false,
+          'message': 'Registrasi gagal: ${response.reasonPhrase}',
+        };
       }
     } catch (e) {
       print('❌ Error: $e');
-      return LoginResponse(
-        success: false,
-        message: 'Terjadi kesalahan koneksi',
-      );
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan koneksi',
+      };
     }
   }
 }

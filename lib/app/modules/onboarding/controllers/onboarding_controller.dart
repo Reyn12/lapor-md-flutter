@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lapor_md/app/widgets/loading_dialog.dart';
 import '../../../routes/app_pages.dart';
+import '../../../../utils/storage_utils.dart';
 
 class OnboardingController extends GetxController {
   // Page controller untuk handle swipe
@@ -54,11 +55,7 @@ class OnboardingController extends GetxController {
       );
     } else {
       // Kalau sudah halaman terakhir, pindah ke auth
-      showLoading();
-      Future.delayed(const Duration(seconds: 1), () {
-        hideLoading();
-        Get.offNamed(Routes.AUTH);
-      });
+      _completeOnboarding();
     }
   }
 
@@ -69,7 +66,17 @@ class OnboardingController extends GetxController {
 
   // Function untuk skip ke auth langsung
   void skipOnboarding() {
+    _completeOnboarding();
+  }
+
+  // Function untuk handle completion onboarding
+  void _completeOnboarding() async {
     showLoading();
+    
+    // Simpen ke storage bahwa user udah selesai onboarding
+    await StorageUtils.setValue('onboarding_completed', true);
+    print('✅ Onboarding completed and saved to storage');
+    
     Future.delayed(const Duration(seconds: 1), () {
       hideLoading();
       Get.offNamed(Routes.AUTH);
