@@ -56,41 +56,6 @@ class AuthController extends GetxController {
     return result['message'] ?? 'Terjadi kesalahan';
   }
 
-  // Method untuk login (deprecated - use loginWithCredentials instead)
-  Future<void> login() async {
-    try {
-      // Show loading
-      showLoading();
-
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Hide loading
-      hideLoading();
-
-      // This method is deprecated - should use loginWithCredentials
-      print('⚠️ Warning: login() method deprecated, use loginWithCredentials instead');
-      
-      Get.snackbar(
-        'Error',
-        'Method tidak tersedia, gunakan form login',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[800],
-        snackPosition: SnackPosition.TOP,
-      );
-    } catch (e) {
-      // Hide loading
-      hideLoading();
-
-      Get.snackbar(
-        'Error',
-        'Terjadi kesalahan: $e',
-        backgroundColor: Colors.red[100],
-        colorText: Colors.red[800],
-        snackPosition: SnackPosition.TOP,
-      );
-    }
-  }
-
   // Method untuk login dengan credentials dari parameter
   Future<void> loginWithCredentials({
     required String email,
@@ -152,7 +117,7 @@ class AuthController extends GetxController {
 
         // Navigate to Dashboard Warga
         print("Coming Soon Navigate to Dashboard Warga");
-        // Get.offNamed(Routes.HOME);
+        Get.offNamed(Routes.DASHBOARD_WARGA);
       } else {
         // Login gagal - extract error messages
         final errorMessage = _getValidationErrorMessage(result);

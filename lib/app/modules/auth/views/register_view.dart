@@ -54,7 +54,7 @@ class RegisterView extends GetView<AuthController> {
                 
                 // Title
                 const Text(
-                  'Mari Daftar.',
+                  'Daftar Akun',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,

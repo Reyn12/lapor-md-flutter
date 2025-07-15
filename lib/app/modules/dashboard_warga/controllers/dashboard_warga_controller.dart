@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 
 class DashboardWargaController extends GetxController {
-  //TODO: Implement DashboardWargaController
+  // Index untuk bottom navigation
+  final selectedIndex = 0.obs;
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -19,5 +19,8 @@ class DashboardWargaController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  // Method untuk ganti halaman
+  void changePage(int index) {
+    selectedIndex.value = index;
+  }
 }

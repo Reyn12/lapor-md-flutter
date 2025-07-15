@@ -51,7 +51,7 @@ class LoginView extends GetView<AuthController> {
                 
                 // Title
                 const Text(
-                  'Mari Masuk.',
+                  'Login Akun',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
