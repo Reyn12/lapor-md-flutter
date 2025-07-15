@@ -10,20 +10,12 @@ class AuthController extends GetxController {
   // Service
   final AuthService _authService = AuthService();
 
-  // Form controllers
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-
-  // Form key untuk validation
-  final formKey = GlobalKey<FormState>();
-
   // Observable user data
   final Rx<User?> currentUser = Rx<User?>(null);
 
   @override
   void onInit() {
     super.onInit();
-    _loadSavedLoginInput();
   }
 
   @override
@@ -33,29 +25,7 @@ class AuthController extends GetxController {
 
   @override
   void onClose() {
-    emailController.dispose();
-    passwordController.dispose();
     super.onClose();
-  }
-
-  // Method untuk load input login yang disimpan
-  void _loadSavedLoginInput() {
-    final savedInput = StorageUtils.getValue<Map<String, dynamic>>('input_login');
-    if (savedInput != null) {
-      emailController.text = savedInput['email'] ?? '';
-      passwordController.text = savedInput['password'] ?? '';
-      print('✅ Loaded saved login input');
-    }
-  }
-
-  // Method untuk save input login
-  void _saveLoginInput() async {
-    final inputData = {
-      'email': emailController.text.trim(),
-      'password': passwordController.text,
-    };
-    await StorageUtils.setValue('input_login', inputData);
-    print('💾 Saved login input');
   }
 
   // Method untuk hapus input login yang disimpan
@@ -64,23 +34,76 @@ class AuthController extends GetxController {
     print('🗑️ Cleared saved login input');
   }
 
-  // Method untuk login
+  // Helper method untuk extract validation errors
+  String _getValidationErrorMessage(Map<String, dynamic> result) {
+    if (result['errors'] != null) {
+      final errors = result['errors'] as Map<String, dynamic>;
+      final errorMessages = <String>[];
+      
+      errors.forEach((field, messages) {
+        if (messages is List) {
+          for (var message in messages) {
+            errorMessages.add(message.toString());
+          }
+        }
+      });
+      
+      if (errorMessages.isNotEmpty) {
+        return errorMessages.join('\n');
+      }
+    }
+    
+    return result['message'] ?? 'Terjadi kesalahan';
+  }
+
+  // Method untuk login (deprecated - use loginWithCredentials instead)
   Future<void> login() async {
-    // Validate form
-    if (!formKey.currentState!.validate()) {
+    try {
+      // Show loading
+      showLoading();
+
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Hide loading
+      hideLoading();
+
+      // This method is deprecated - should use loginWithCredentials
+      print('⚠️ Warning: login() method deprecated, use loginWithCredentials instead');
+      
       Get.snackbar(
         'Error',
-        'Mohon isi semua field dengan benar',
+        'Method tidak tersedia, gunakan form login',
         backgroundColor: Colors.red[100],
         colorText: Colors.red[800],
         snackPosition: SnackPosition.TOP,
       );
-      return;
-    }
+    } catch (e) {
+      // Hide loading
+      hideLoading();
 
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan: $e',
+        backgroundColor: Colors.red[100],
+        colorText: Colors.red[800],
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  // Method untuk login dengan credentials dari parameter
+  Future<void> loginWithCredentials({
+    required String email,
+    required String password,
+  }) async {
     try {
       // Save input untuk testing
-      _saveLoginInput();
+      final inputData = {
+        'email': email,
+        'password': password,
+      };
+      await StorageUtils.setValue('input_login', inputData);
+      print('💾 Saved login input');
       
       // Show loading
       showLoading();
@@ -89,8 +112,8 @@ class AuthController extends GetxController {
 
       // Call API
       final result = await _authService.login(
-        email: emailController.text.trim(),
-        password: passwordController.text,
+        email: email,
+        password: password,
       );
 
       // Hide loading
@@ -131,10 +154,17 @@ class AuthController extends GetxController {
         print("Coming Soon Navigate to Dashboard Warga");
         // Get.offNamed(Routes.HOME);
       } else {
-        // Login gagal
+        // Login gagal - extract error messages
+        final errorMessage = _getValidationErrorMessage(result);
+        
+        print('❌ Login gagal: $errorMessage');
+        if (result['errors'] != null) {
+          print('📋 Validation errors: ${result['errors']}');
+        }
+        
         Get.snackbar(
           'Login Gagal',
-          result['message'] ?? 'Login gagal',
+          errorMessage,
           backgroundColor: Colors.red[100],
           colorText: Colors.red[800],
           snackPosition: SnackPosition.TOP,
@@ -156,25 +186,47 @@ class AuthController extends GetxController {
 
   // Method untuk register (bonus)
   Future<void> register({
-    required String name,
+    required String nama,
     required String email,
     required String password,
+    required String noTelepon,
+    required String alamat,
   }) async {
     try {
       // Show loading
       showLoading();
 
+      await Future.delayed(const Duration(seconds: 1));
+
       // Call API
       final result = await _authService.register(
-        name: name,
+        nama: nama,
         email: email,
         password: password,
+        noTelepon: noTelepon,
+        alamat: alamat,
       );
 
       // Hide loading
       hideLoading();
 
       if (result['success'] == true) {
+        // Parse user data dari response (struktur beda dari login)
+        final userData = result['user'];
+        final user = User.fromJson(userData);
+        
+        // Simpen input email & password ke GetStorage untuk auto login
+        final inputData = {
+          'email': email,
+          'password': password,
+        };
+        await StorageUtils.setValue('input_login', inputData);
+        
+        print('✅ Register berhasil!');
+        print('👤 User: ${user.nama} (${user.email})');
+        print('💾 Input login tersimpan untuk auto-fill');
+        StorageUtils.printAllStorage();
+
         // Register berhasil
         Get.snackbar(
           'Berhasil',
@@ -184,16 +236,25 @@ class AuthController extends GetxController {
           snackPosition: SnackPosition.TOP,
         );
 
-        // Navigate to home
-        Get.offNamed(Routes.HOME);
+        // Navigate ke auth view (login screen) dengan input terisi otomatis
+        // Gunakan offAllNamed untuk clear semua navigation stack
+        Get.offAllNamed(Routes.AUTH);
       } else {
-        // Register gagal
+        // Register gagal - extract error messages untuk validation errors
+        final errorMessage = _getValidationErrorMessage(result);
+        
+        print('❌ Register gagal: $errorMessage');
+        if (result['errors'] != null) {
+          print('📋 Validation errors: ${result['errors']}');
+        }
+        
         Get.snackbar(
           'Registrasi Gagal',
-          result['message'] ?? 'Registrasi gagal',
+          errorMessage,
           backgroundColor: Colors.red[100],
           colorText: Colors.red[800],
           snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 4), // Kasih waktu lebih untuk baca error
         );
       }
     } catch (e) {
@@ -219,10 +280,6 @@ class AuthController extends GetxController {
       // Clear tokens dan user data dari storage
       await StorageUtils.clearAll();
       
-      // Clear form
-      emailController.clear();
-      passwordController.clear();
-      
       print('✅ User logged out');
       
       // Navigate to auth
@@ -244,26 +301,5 @@ class AuthController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     }
-  }
-
-  // Validation methods
-  String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Email tidak boleh kosong';
-    }
-    if (!GetUtils.isEmail(value)) {
-      return 'Format email tidak valid';
-    }
-    return null;
-  }
-
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password tidak boleh kosong';
-    }
-    if (value.length < 6) {
-      return 'Password minimal 6 karakter';
-    }
-    return null;
   }
 }

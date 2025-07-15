@@ -7,6 +7,9 @@ abstract class Routes {
   static const SPLASH_SCREEN = _Paths.SPLASH_SCREEN;
   static const ONBOARDING = _Paths.ONBOARDING;
   static const AUTH = _Paths.AUTH;
+  static const DASHBOARD_WARGA = _Paths.DASHBOARD_WARGA;
+  static const DASHBOARD_PEGAWAI = _Paths.DASHBOARD_PEGAWAI;
+  static const DASHBOARD_KEPALA_KANTOR = _Paths.DASHBOARD_KEPALA_KANTOR;
 }
 
 abstract class _Paths {
@@ -15,4 +18,7 @@ abstract class _Paths {
   static const SPLASH_SCREEN = '/splash-screen';
   static const ONBOARDING = '/onboarding';
   static const AUTH = '/auth';
+  static const DASHBOARD_WARGA = '/dashboard-warga';
+  static const DASHBOARD_PEGAWAI = '/dashboard-pegawai';
+  static const DASHBOARD_KEPALA_KANTOR = '/dashboard-kepala-kantor';
 }

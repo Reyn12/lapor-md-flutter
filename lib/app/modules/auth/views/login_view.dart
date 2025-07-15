@@ -3,19 +3,38 @@ import 'package:get/get.dart';
 
 import '../controllers/auth_controller.dart';
 import '../widgets/w_input_field.dart';
+import 'register_view.dart';
+import '../../../../utils/storage_utils.dart';
 
 class LoginView extends GetView<AuthController> {
   const LoginView({super.key});
   
   @override
   Widget build(BuildContext context) {
+    // Form key lokal untuk login (pisah dari register)
+    final loginFormKey = GlobalKey<FormState>();
+    
+    // Controllers lokal untuk login (pisah dari AuthController)
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    
+    // Load saved input saat build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final savedInput = StorageUtils.getValue<Map<String, dynamic>>('input_login');
+      if (savedInput != null) {
+        emailController.text = savedInput['email'] ?? '';
+        passwordController.text = savedInput['password'] ?? '';
+        print('✅ Loaded saved login input to local controllers');
+      }
+    });
+    
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
-            key: controller.formKey,
+            key: loginFormKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -55,18 +74,34 @@ class LoginView extends GetView<AuthController> {
                 
                 const SizedBox(height: 50),
                 
-                // Email field dengan controller dan validator
+                // Email field dengan local controller
                 EmailInputField(
-                  controller: controller.emailController,
-                  validator: controller.validateEmail,
+                  controller: emailController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Email tidak boleh kosong';
+                    }
+                    if (!GetUtils.isEmail(value)) {
+                      return 'Format email tidak valid';
+                    }
+                    return null;
+                  },
                 ),
                 
                 const SizedBox(height: 24),
                 
-                // Password field dengan controller dan validator
+                // Password field dengan local controller
                 PasswordInputField(
-                  controller: controller.passwordController,
-                  validator: controller.validatePassword,
+                  controller: passwordController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Password tidak boleh kosong';
+                    }
+                    if (value.length < 6) {
+                      return 'Password minimal 6 karakter';
+                    }
+                    return null;
+                  },
                 ),
                 
                 const SizedBox(height: 40),
@@ -76,7 +111,24 @@ class LoginView extends GetView<AuthController> {
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: controller.login,
+                    onPressed: () {
+                      // Validasi lokal dulu sebelum call controller.login()
+                      if (loginFormKey.currentState!.validate()) {
+                        // Pass email & password ke controller
+                        controller.loginWithCredentials(
+                          email: emailController.text.trim(),
+                          password: passwordController.text,
+                        );
+                      } else {
+                        Get.snackbar(
+                          'Error',
+                          'Mohon isi semua field dengan benar',
+                          backgroundColor: Colors.red[100],
+                          colorText: Colors.red[800],
+                          snackPosition: SnackPosition.TOP,
+                        );
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF6C63FF),
                       foregroundColor: Colors.white,
@@ -117,7 +169,11 @@ class LoginView extends GetView<AuthController> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // TODO: Navigate to sign up
+                        Get.to(
+                          () => const RegisterView(),
+                          transition: Transition.rightToLeft,
+                          duration: const Duration(milliseconds: 300),
+                        );
                       },
                       child: const Text(
                         'Daftar',

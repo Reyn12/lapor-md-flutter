@@ -71,11 +71,13 @@ class AuthService {
   Future<Map<String, dynamic>> register({
     required String email,
     required String password,
-    required String name,
+    required String nama,
+    required String noTelepon,
+    required String alamat,
   }) async {
     try {
       print('📤 Register Request to: ${Endpoints.register}');
-      print('📤 Data: {"name": "$name", "email": "$email", "password": "***"}');
+      print('📤 Data: {"nama": "$nama", "email": "$email", "no_telepon": "$noTelepon", "alamat": "$alamat", "password": "***"}');
 
       final response = await http.post(
         Uri.parse(Endpoints.register),
@@ -83,9 +85,12 @@ class AuthService {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          "name": name,
+          "nama": nama,
           "email": email,
+          "no_telepon": noTelepon,
+          "alamat": alamat,
           "password": password,
+          "password_confirmation": password,
         }),
       );
 

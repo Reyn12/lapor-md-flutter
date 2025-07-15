@@ -2,6 +2,12 @@ import 'package:get/get.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/auth_view.dart';
+import '../modules/dashboard_kepala_kantor/bindings/dashboard_kepala_kantor_binding.dart';
+import '../modules/dashboard_kepala_kantor/views/dashboard_kepala_kantor_view.dart';
+import '../modules/dashboard_pegawai/bindings/dashboard_pegawai_binding.dart';
+import '../modules/dashboard_pegawai/views/dashboard_pegawai_view.dart';
+import '../modules/dashboard_warga/bindings/dashboard_warga_binding.dart';
+import '../modules/dashboard_warga/views/dashboard_warga_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -40,6 +46,21 @@ class AppPages {
       transition: Transition.rightToLeft,
       transitionDuration: const Duration(milliseconds: 300),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: _Paths.DASHBOARD_WARGA,
+      page: () => const DashboardWargaView(),
+      binding: DashboardWargaBinding(),
+    ),
+    GetPage(
+      name: _Paths.DASHBOARD_PEGAWAI,
+      page: () => const DashboardPegawaiView(),
+      binding: DashboardPegawaiBinding(),
+    ),
+    GetPage(
+      name: _Paths.DASHBOARD_KEPALA_KANTOR,
+      page: () => const DashboardKepalaKantorView(),
+      binding: DashboardKepalaKantorBinding(),
     ),
   ];
 }
