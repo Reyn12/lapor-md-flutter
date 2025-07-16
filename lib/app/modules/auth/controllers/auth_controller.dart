@@ -106,15 +106,6 @@ class AuthController extends GetxController {
         print('👤 User: ${user.nama} (${user.email})');
         StorageUtils.printAllStorage();
 
-        // Login berhasil
-        Get.snackbar(
-          'Berhasil',
-          result['message'] ?? 'Login berhasil',
-          backgroundColor: Colors.green[100],
-          colorText: Colors.green[800],
-          snackPosition: SnackPosition.TOP,
-        );
-
         // Navigate to Dashboard Warga
         print("Coming Soon Navigate to Dashboard Warga");
         Get.offNamed(Routes.DASHBOARD_WARGA);

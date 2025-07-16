@@ -10,6 +10,10 @@ class Endpoints {
   // Auth
   static String get login => '$baseUrl/api/auth/login';
   static String get register => '$baseUrl/api/auth/register';
+
+  // Dashboard Warga
+  static String get dashboardWargaHome => '$baseUrl/api/warga/home';
+
   static String get refreshToken => '$baseUrl/api/auth/refresh-token';
   static String get logout => '$baseUrl/api/auth/logout';
 

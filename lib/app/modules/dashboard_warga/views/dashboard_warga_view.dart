@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-
+import 'package:lapor_md/app/modules/dashboard_warga/views/notifikasi/notifikasi_view.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/profile/profile_view.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/riwayat_view.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/home/home_view.dart';
 import '../controllers/dashboard_warga_controller.dart';
 
 class DashboardWargaView extends GetView<DashboardWargaController> {
@@ -29,33 +32,13 @@ class DashboardWargaView extends GetView<DashboardWargaController> {
   Widget _buildPage() {
     switch (controller.selectedIndex.value) {
       case 0:
-        return const Center(
-          child: Text(
-            'Ini halaman Home Dashboard Warga',
-            style: TextStyle(fontSize: 20),
-          ),
-        );
+        return const HomeView();
       case 1:
-        return const Center(
-          child: Text(
-            'Ini halaman Riwayat Dashboard Warga',
-            style: TextStyle(fontSize: 20),
-          ),
-        );
+        return const RiwayatView();
       case 2:
-        return const Center(
-          child: Text(
-            'Ini halaman Notifikasi Dashboard Warga',
-            style: TextStyle(fontSize: 20),
-          ),
-        );
+        return const NotifikasiView();
       case 3:
-        return const Center(
-          child: Text(
-            'Ini halaman Profile Dashboard Warga',
-            style: TextStyle(fontSize: 20),
-          ),
-        );
+        return const ProfileView();
       default:
         return const Center(
           child: Text('Halaman tidak ditemukan'),
