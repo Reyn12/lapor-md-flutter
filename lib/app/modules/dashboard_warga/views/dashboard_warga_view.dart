@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/notifikasi/notifikasi_view.dart';
@@ -12,19 +13,26 @@ class DashboardWargaView extends GetView<DashboardWargaController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Obx(() => _buildPage()),
-      bottomNavigationBar: ConvexAppBar(
-        style: TabStyle.reactCircle,
-        items: const [
-          TabItem(icon: Icons.home, title: 'Home'),
-          TabItem(icon: Icons.history, title: 'Riwayat'),
-          TabItem(icon: Icons.notifications, title: 'Notifikasi'),
-          TabItem(icon: Icons.person, title: 'Profile'),
-        ],
-        initialActiveIndex: 0,
-        onTap: (int index) => controller.changePage(index),
-        height: 60,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
+      child: Scaffold(
+        body: Obx(() => _buildPage()),
+        bottomNavigationBar: ConvexAppBar(
+          style: TabStyle.reactCircle,
+          items: const [
+            TabItem(icon: Icons.home, title: 'Home'),
+            TabItem(icon: Icons.history, title: 'Riwayat'),
+            TabItem(icon: Icons.notifications, title: 'Notifikasi'),
+            TabItem(icon: Icons.person, title: 'Profile'),
+          ],
+          initialActiveIndex: 0,
+          onTap: (int index) => controller.changePage(index),
+          height: 60,
+        ),
       ),
     );
   }

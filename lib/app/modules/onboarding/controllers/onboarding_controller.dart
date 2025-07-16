@@ -77,7 +77,7 @@ class OnboardingController extends GetxController {
     await StorageUtils.setValue('onboarding_completed', true);
     print('✅ Onboarding completed and saved to storage');
     
-    Future.delayed(const Duration(seconds: 1), () {
+    Future.delayed(const Duration(milliseconds: 1500), () {
       hideLoading();
       Get.offNamed(Routes.AUTH);
     });

@@ -51,6 +51,8 @@ class AppPages {
       name: _Paths.DASHBOARD_WARGA,
       page: () => const DashboardWargaView(),
       binding: DashboardWargaBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
       name: _Paths.DASHBOARD_PEGAWAI,
