@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/auth/views/auth_view.dart';
+import '../modules/buat_pengaduan_warga/bindings/buat_pengaduan_warga_binding.dart';
+import '../modules/buat_pengaduan_warga/views/buat_pengaduan_warga_view.dart';
 import '../modules/dashboard_kepala_kantor/bindings/dashboard_kepala_kantor_binding.dart';
 import '../modules/dashboard_kepala_kantor/views/dashboard_kepala_kantor_view.dart';
 import '../modules/dashboard_pegawai/bindings/dashboard_pegawai_binding.dart';
@@ -63,6 +65,13 @@ class AppPages {
       name: _Paths.DASHBOARD_KEPALA_KANTOR,
       page: () => const DashboardKepalaKantorView(),
       binding: DashboardKepalaKantorBinding(),
+    ),
+    GetPage(
+      name: _Paths.BUAT_PENGADUAN_WARGA,
+      page: () => const BuatPengaduanWargaView(),
+      binding: BuatPengaduanWargaBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
   ];
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:lapor_md/app/routes/app_pages.dart';
 
 class WBuatPengaduan extends StatelessWidget {
   const WBuatPengaduan({super.key});
@@ -30,7 +32,7 @@ class WBuatPengaduan extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: InkWell(
           onTap: () {
-            print('Button Buat Pengaduan Baru diklik!');
+            Get.toNamed(Routes.BUAT_PENGADUAN_WARGA);
           },
           borderRadius: BorderRadius.circular(16),
           splashColor: Colors.white.withOpacity(0.3),

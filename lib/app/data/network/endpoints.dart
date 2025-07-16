@@ -10,17 +10,15 @@ class Endpoints {
   // Auth
   static String get login => '$baseUrl/api/auth/login';
   static String get register => '$baseUrl/api/auth/register';
-
-  // Dashboard Warga
-  static String get dashboardWargaHome => '$baseUrl/api/warga/home';
-
   static String get refreshToken => '$baseUrl/api/auth/refresh-token';
   static String get logout => '$baseUrl/api/auth/logout';
 
-  // User
-  static String get getUser => '$baseUrl/api/user/me';
-  static String get updateUser => '$baseUrl/api/user/me';
-  static String get changePassword => '$baseUrl/api/user/change-password';
-  static String get forgotPassword => '$baseUrl/api/user/forgot-password';
+  // Dashboard Warga
+  static String get dashboardWargaHome => '$baseUrl/api/warga/home';
+  static String get dashboardWargaBuatPengaduan => '$baseUrl/api/warga/pengaduan';
+  static String get dashboardWargaAmbilKategori => '$baseUrl/api/kategori';
+
+
+
   
 }
