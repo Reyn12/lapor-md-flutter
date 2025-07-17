@@ -166,14 +166,7 @@ class RiwayatView extends StatelessWidget {
                     final pengaduan = pengaduanList[index];
                     return RiwayatPengaduanCard(
                       pengaduan: pengaduan,
-                      onTap: () {
-                        // TODO: Navigate to detail pengaduan
-                        Get.snackbar(
-                          'Info',
-                          'Detail pengaduan ${pengaduan.nomorPengaduan}',
-                          snackPosition: SnackPosition.BOTTOM,
-                        );
-                      },
+                      // Hapus onTap custom, biar pakai default navigation ke detail
                     );
                   },
                 ),

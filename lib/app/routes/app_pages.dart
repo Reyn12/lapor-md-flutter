@@ -10,6 +10,8 @@ import '../modules/dashboard_pegawai/bindings/dashboard_pegawai_binding.dart';
 import '../modules/dashboard_pegawai/views/dashboard_pegawai_view.dart';
 import '../modules/dashboard_warga/bindings/dashboard_warga_binding.dart';
 import '../modules/dashboard_warga/views/dashboard_warga_view.dart';
+import '../modules/detail_riwayat/bindings/detail_riwayat_binding.dart';
+import '../modules/detail_riwayat/views/detail_riwayat_view.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -70,6 +72,13 @@ class AppPages {
       name: _Paths.BUAT_PENGADUAN_WARGA,
       page: () => const BuatPengaduanWargaView(),
       binding: BuatPengaduanWargaBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
+    ),
+    GetPage(
+      name: _Paths.DETAIL_RIWAYAT,
+      page: () => const DetailRiwayatView(),
+      binding: DetailRiwayatBinding(),
       transition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 300),
     ),

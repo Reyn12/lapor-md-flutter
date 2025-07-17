@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/controllers/dashboard_warga_controller.dart';
+import 'package:lapor_md/app/routes/app_pages.dart';
 
 class WRecentPengaduan extends StatelessWidget {
   final DashboardWargaController controller;
@@ -99,7 +100,9 @@ class WRecentPengaduan extends StatelessWidget {
         shadowColor: Colors.black.withOpacity(0.05),
         child: InkWell(
           onTap: () {
-            print('Pengaduan ${pengaduan.nomorPengaduan} diklik');
+            Get.toNamed(Routes.DETAIL_RIWAYAT, arguments: {
+              'pengaduan_id': pengaduan.id,
+            });
           },
           borderRadius: BorderRadius.circular(12),
           child: Container(

@@ -33,7 +33,6 @@ class RiwayatStatisticWidget extends StatelessWidget {
                 title: 'Total Pengaduan',
                 value: stats.totalPengaduan.toString(),
                 color: const Color(0xFF4F46E5), // Indigo
-                icon: Icons.assessment,
               ),
             ),
             const SizedBox(width: 12),
@@ -43,7 +42,6 @@ class RiwayatStatisticWidget extends StatelessWidget {
                 title: 'Selesai',
                 value: stats.selesai.toString(),
                 color: const Color(0xFF10B981), // Green
-                icon: Icons.check_circle,
               ),
             ),
           ],
@@ -56,10 +54,9 @@ class RiwayatStatisticWidget extends StatelessWidget {
     required String title,
     required String value,
     required Color color,
-    required IconData icon,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      padding: const EdgeInsets.only(bottom: 16, left: 12, right: 12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -81,11 +78,6 @@ class RiwayatStatisticWidget extends StatelessWidget {
       child: Column(
         children: [
           // Icon
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 24,
-          ),
           const SizedBox(height: 8),
           // Value with white color
           Text(
@@ -145,7 +137,6 @@ class RiwayatStatisticWidget extends StatelessWidget {
             title: 'Total Pengaduan',
             value: '0',
             color: const Color(0xFF4F46E5),
-            icon: Icons.assessment,
           ),
         ),
         const SizedBox(width: 12),
@@ -154,7 +145,6 @@ class RiwayatStatisticWidget extends StatelessWidget {
             title: 'Selesai',
             value: '0',
             color: const Color(0xFF10B981),
-            icon: Icons.check_circle,
           ),
         ),
       ],

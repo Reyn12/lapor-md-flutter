@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/pengaduan_data_model.dart';
 import 'package:intl/intl.dart';
+import 'package:get/get.dart';
+import 'package:lapor_md/app/routes/app_pages.dart';
 
 class RiwayatPengaduanCard extends StatelessWidget {
   final PengaduanDataModel pengaduan;
@@ -14,122 +16,129 @@ class RiwayatPengaduanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: _getCardBackgroundColor(pengaduan.status),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: _getCardBackgroundColor(pengaduan.status),
+        borderRadius: BorderRadius.circular(12),
+        elevation: 2,
+        shadowColor: Colors.grey.withOpacity(0.1),
+        child: InkWell(
+          onTap: onTap ?? () {
+            // Navigate to detail riwayat dengan pengaduan ID
+            Get.toNamed(
+              Routes.DETAIL_RIWAYAT,
+              arguments: {
+                'pengaduan_id': pengaduan.id,
+              },
+            );
+          },
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey[200]!),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header (nomor + status)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          splashColor: const Color(0xFF4F46E5).withOpacity(0.1),
+          highlightColor: const Color(0xFF4F46E5).withOpacity(0.05),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Header (nomor + status)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      pengaduan.nomorPengaduan,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF4F46E5),
+                      ),
+                    ),
+                    _buildStatusBadge(pengaduan.status),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                
+                // Judul
                 Text(
-                  pengaduan.nomorPengaduan,
+                  pengaduan.judul,
                   style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F46E5),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
                 ),
-                _buildStatusBadge(pengaduan.status),
-              ],
-            ),
-            const SizedBox(height: 12),
-            
-            // Judul
-            Text(
-              pengaduan.judul,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            
-            // Kategori dan tanggal
-            Row(
-              children: [
-                Icon(
-                  Icons.category_outlined,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  pengaduan.kategori.namaKategori,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Icon(
-                  Icons.schedule,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  _formatDate(pengaduan.tanggalPengaduan),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            
-            // Lokasi
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on_outlined,
-                  size: 16,
-                  color: Colors.grey[600],
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    pengaduan.lokasi,
-                    style: TextStyle(
-                      fontSize: 12,
+                const SizedBox(height: 8),
+                
+                // Kategori dan tanggal
+                Row(
+                  children: [
+                    Icon(
+                      Icons.category_outlined,
+                      size: 16,
                       color: Colors.grey[600],
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    const SizedBox(width: 4),
+                    Text(
+                      pengaduan.kategori.namaKategori,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Icon(
+                      Icons.schedule,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatDate(pengaduan.tanggalPengaduan),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                
+                // Lokasi
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 16,
+                      color: Colors.grey[600],
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        pengaduan.lokasi,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                
+                // Arrow icon
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.grey[400],
                   ),
                 ),
               ],
             ),
-            
-            // Arrow icon
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Colors.grey[400],
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

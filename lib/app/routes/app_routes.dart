@@ -11,6 +11,7 @@ abstract class Routes {
   static const DASHBOARD_PEGAWAI = _Paths.DASHBOARD_PEGAWAI;
   static const DASHBOARD_KEPALA_KANTOR = _Paths.DASHBOARD_KEPALA_KANTOR;
   static const BUAT_PENGADUAN_WARGA = _Paths.BUAT_PENGADUAN_WARGA;
+  static const DETAIL_RIWAYAT = _Paths.DETAIL_RIWAYAT;
 }
 
 abstract class _Paths {
@@ -23,4 +24,5 @@ abstract class _Paths {
   static const DASHBOARD_PEGAWAI = '/dashboard-pegawai';
   static const DASHBOARD_KEPALA_KANTOR = '/dashboard-kepala-kantor';
   static const BUAT_PENGADUAN_WARGA = '/buat-pengaduan-warga';
+  static const DETAIL_RIWAYAT = '/detail-riwayat';
 }
