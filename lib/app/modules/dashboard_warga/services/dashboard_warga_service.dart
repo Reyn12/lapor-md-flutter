@@ -67,4 +67,52 @@ class DashboardWargaService {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> fetchDataRiwayat({String? status}) async {
+    try {
+      // Ambil access token dari storage
+      final accessToken = StorageUtils.getValue<String>('access_token');
+      
+      // Build URL dengan query params kalau ada status
+      String url = Endpoints.dashboardWargaRiwayat;
+      if (status != null && status != 'semua') {
+        url += '?status=$status';
+      }
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        
+        if (jsonData['success'] == true) {
+          return {
+            'success': true,
+            'data': jsonData['data'],
+          };
+        } else {
+          return {
+            'success': false,
+            'message': 'Data riwayat tidak berhasil dimuat',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'Server error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
 }

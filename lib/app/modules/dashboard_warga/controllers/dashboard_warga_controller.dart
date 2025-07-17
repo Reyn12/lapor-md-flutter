@@ -4,6 +4,8 @@ import 'package:lapor_md/app/modules/dashboard_warga/views/home/models/statistic
 import 'package:lapor_md/app/modules/dashboard_warga/views/home/models/recent_pengaduan_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/home/models/recent_notifikasi_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/pengaduan_data_model.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/statistic_riwayat_data_model.dart';
 
 class DashboardWargaController extends GetxController {
   // Index untuk bottom navigation
@@ -23,8 +25,9 @@ class DashboardWargaController extends GetxController {
   // User data observables
   final userName = ''.obs;
   
-  // TODO: Riwayat data observables
-  // final RxList<RiwayatModel> riwayatList = <RiwayatModel>[].obs;
+  // Riwayat data observables
+  final RxList<PengaduanDataModel> riwayatList = <PengaduanDataModel>[].obs;
+  final Rxn<StatisticRiwayatDataModel> riwayatStatistics = Rxn<StatisticRiwayatDataModel>();
   
   // TODO: Notifikasi data observables  
   // final RxList<NotifikasiModel> notifikasiList = <NotifikasiModel>[].obs;
@@ -63,7 +66,7 @@ class DashboardWargaController extends GetxController {
         fetchHomeData();
         break;
       case 1:
-        fetchRiwayatData();
+        fetchRiwayatData(); // Default tanpa parameter (semua)
         break;
       case 2:
         fetchNotifikasiData();
@@ -112,18 +115,36 @@ class DashboardWargaController extends GetxController {
   }
 
   // Method untuk fetch data riwayat
-  Future<void> fetchRiwayatData() async {
+  Future<void> fetchRiwayatData({String? status}) async {
     try {
       isLoadingRiwayat.value = true;
       
-      // TODO: Hit API endpoint riwayat
-      // final result = await DashboardWargaService.fetchRiwayatData();
+      final result = await DashboardWargaService.fetchDataRiwayat(status: status);
       
-      // TODO: Parse dan assign ke riwayatList
-      // if (result['success'] == true) {
-      //   riwayatList.value = result['riwayat'];
-      // }
-      
+      if (result['success'] == true) {
+        final data = result['data'];
+        
+        // Parse statistics (cuma ada kalau gak ada filter status)
+        if (data['statistics'] != null) {
+          riwayatStatistics.value = StatisticRiwayatDataModel.fromJson(data['statistics']);
+        } else {
+          riwayatStatistics.value = null;
+        }
+        
+        // Parse pengaduan list
+        final List<PengaduanDataModel> pengaduanList = 
+            (data['pengaduan'] as List)
+                .map((item) => PengaduanDataModel.fromJson(item))
+                .toList();
+        
+        riwayatList.value = pengaduanList;
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message'] ?? 'Gagal memuat data riwayat',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',

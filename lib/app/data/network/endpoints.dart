@@ -18,6 +18,10 @@ class Endpoints {
   static String get dashboardWargaBuatPengaduan => '$baseUrl/api/warga/pengaduan';
   static String get dashboardWargaAmbilKategori => '$baseUrl/api/kategori';
 
+  // Riwayat
+  static String get dashboardWargaRiwayat => '$baseUrl/api/warga/riwayat';
+  static String get dashboardWargaRiwayatDetail => '$baseUrl/api/warga/pengaduan/';
+
 
 
   
