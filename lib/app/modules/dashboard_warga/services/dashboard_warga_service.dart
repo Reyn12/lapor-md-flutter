@@ -115,4 +115,68 @@ class DashboardWargaService {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> fetchNotifikasiData({
+    String? status,
+    int? page,
+    int? limit,
+  }) async {
+    try {
+      // Ambil access token dari storage
+      final accessToken = StorageUtils.getValue<String>('access_token');
+      
+      // Build URL dengan query params
+      String url = Endpoints.dashboardWargaNotifikasi;
+      List<String> queryParams = [];
+      
+      if (status != null && status != 'semua') {
+        queryParams.add('status=$status');
+      }
+      if (page != null) {
+        queryParams.add('page=$page');
+      }
+      if (limit != null) {
+        queryParams.add('limit=$limit');
+      }
+      
+      if (queryParams.isNotEmpty) {
+        url += '?${queryParams.join('&')}';
+      }
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        
+        if (jsonData['success'] == true) {
+          return {
+            'success': true,
+            'data': jsonData['data'],
+          };
+        } else {
+          return {
+            'success': false,
+            'message': 'Data notifikasi tidak berhasil dimuat',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'Server error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
 }

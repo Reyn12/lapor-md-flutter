@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../data/network/endpoints.dart';
-import '../models/user_model.dart';
 
 class AuthService {
   // Method untuk login

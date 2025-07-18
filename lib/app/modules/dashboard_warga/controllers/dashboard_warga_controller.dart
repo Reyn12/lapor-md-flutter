@@ -6,6 +6,7 @@ import 'package:lapor_md/app/modules/dashboard_warga/views/home/models/recent_no
 import 'package:lapor_md/utils/storage_utils.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/pengaduan_data_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/statistic_riwayat_data_model.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/notifikasi/models/notifikasi_model.dart';
 
 class DashboardWargaController extends GetxController {
   // Index untuk bottom navigation
@@ -29,8 +30,10 @@ class DashboardWargaController extends GetxController {
   final RxList<PengaduanDataModel> riwayatList = <PengaduanDataModel>[].obs;
   final Rxn<StatisticRiwayatDataModel> riwayatStatistics = Rxn<StatisticRiwayatDataModel>();
   
-  // TODO: Notifikasi data observables  
-  // final RxList<NotifikasiModel> notifikasiList = <NotifikasiModel>[].obs;
+  // Notifikasi data observables  
+  final RxList<NotifikasiModel> notifikasiList = <NotifikasiModel>[].obs;
+  final Rxn<NotifikasiPaginationModel> notifikasiPagination = Rxn<NotifikasiPaginationModel>();
+  final Rxn<NotifikasiStatisticsModel> notifikasiStatistics = Rxn<NotifikasiStatisticsModel>();
   
   // TODO: Profile data observables
   // final Rxn<ProfileModel> profileData = Rxn<ProfileModel>();
@@ -157,18 +160,47 @@ class DashboardWargaController extends GetxController {
   }
 
   // Method untuk fetch data notifikasi
-  Future<void> fetchNotifikasiData() async {
+  Future<void> fetchNotifikasiData({
+    String? status,
+    int? page,
+    int? limit,
+  }) async {
     try {
       isLoadingNotifikasi.value = true;
       
-      // TODO: Hit API endpoint notifikasi
-      // final result = await DashboardWargaService.fetchNotifikasiData();
+      final result = await DashboardWargaService.fetchNotifikasiData(
+        status: status,
+        page: page,
+        limit: limit,
+      );
       
-      // TODO: Parse dan assign ke notifikasiList
-      // if (result['success'] == true) {
-      //   notifikasiList.value = result['notifikasi'];
-      // }
-      
+      if (result['success'] == true) {
+        final data = result['data'];
+        
+        // Parse notifikasi list
+        final List<NotifikasiModel> notifikasiListData = 
+            (data['notifikasi'] as List)
+                .map((item) => NotifikasiModel.fromJson(item))
+                .toList();
+        
+        notifikasiList.value = notifikasiListData;
+        
+        // Parse pagination
+        if (data['pagination'] != null) {
+          notifikasiPagination.value = NotifikasiPaginationModel.fromJson(data['pagination']);
+        }
+        
+        // Parse statistics
+        if (data['statistics'] != null) {
+          notifikasiStatistics.value = NotifikasiStatisticsModel.fromJson(data['statistics']);
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message'] ?? 'Gagal memuat data notifikasi',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
