@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:lapor_md/app/modules/dashboard_warga/controllers/dashboard_warga_controller.dart';
+import '../../../controllers/dashboard_pegawai_controller.dart';
 
-class WNotification extends StatelessWidget {
-  final DashboardWargaController controller;
+class WNotificationPegawai extends StatelessWidget {
+  final DashboardPegawaiController controller;
   
-  const WNotification({
+  const WNotificationPegawai({
     super.key,
     required this.controller,
   });
@@ -14,13 +14,13 @@ class WNotification extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final unreadCount = controller.recentNotifikasi
-          .where((notif) => !notif.isRead)
+          .where((notif) => !(notif['isRead'] as bool))
           .length;
       
       return GestureDetector(
         onTap: () {
-          // Navigasi ke halaman notifikasi
-          controller.changePage(2); // Index 1 untuk tab notifikasi
+          // Navigasi ke halaman notifikasi (belum ada, bisa tambah nanti)
+          
         },
         child: Stack(
           children: [
@@ -43,7 +43,7 @@ class WNotification extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(4),
                   decoration: const BoxDecoration(
-                    color: Colors.red,
+                    color: Color(0xFF10B981), // Green theme untuk pegawai
                     shape: BoxShape.circle,
                   ),
                   constraints: const BoxConstraints(
@@ -66,4 +66,4 @@ class WNotification extends StatelessWidget {
       );
     });
   }
-}
+} 

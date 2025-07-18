@@ -108,7 +108,11 @@ class AuthController extends GetxController {
 
         // Navigate to Dashboard Warga
         print("Coming Soon Navigate to Dashboard Warga");
-        Get.offNamed(Routes.DASHBOARD_WARGA);
+        if (user.role == 'warga') {
+          Get.offNamed(Routes.DASHBOARD_WARGA);
+        } else if (user.role == 'pegawai') {
+          Get.offNamed(Routes.DASHBOARD_PEGAWAI);
+        }
       } else {
         // Login gagal - extract error messages
         final errorMessage = _getValidationErrorMessage(result);

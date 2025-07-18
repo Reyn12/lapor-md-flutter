@@ -9,6 +9,8 @@ import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/pengad
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/statistic_riwayat_data_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/notifikasi/models/notifikasi_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/profile/models/profile_model.dart';
+// Tambah import untuk access view
+import 'package:lapor_md/app/modules/dashboard_warga/views/dashboard_warga_view.dart';
 
 class DashboardWargaController extends GetxController {
   // Index untuk bottom navigation
@@ -62,6 +64,9 @@ class DashboardWargaController extends GetxController {
   void changePage(int index) {
     selectedIndex.value = index;
     loadPageData(index);
+    
+    // Animate ConvexAppBar ke index yang bener
+    DashboardWargaView.animateToIndex(index);
   }
 
   // Method untuk load data sesuai page yang aktif
@@ -258,6 +263,8 @@ class DashboardWargaController extends GetxController {
         ),
         barrierDismissible: false,
       );
+
+      await Future.delayed(const Duration(seconds: 2));
       
       final result = await DashboardWargaService.updateProfileData(
         nama: nama,

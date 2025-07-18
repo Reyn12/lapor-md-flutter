@@ -1,5 +1,5 @@
 class Endpoints {
-  static const String baseUrl = 'http://192.168.0.110:8000';
+  static const String baseUrl = 'http://192.168.18.77:8000';
 
   // ifconfig en0
   // 192.168.18.77

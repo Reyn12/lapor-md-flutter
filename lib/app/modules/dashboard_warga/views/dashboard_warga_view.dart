@@ -10,6 +10,9 @@ import '../controllers/dashboard_warga_controller.dart';
 
 class DashboardWargaView extends GetView<DashboardWargaController> {
   const DashboardWargaView({super.key});
+  
+  // Tambah GlobalKey untuk ConvexAppBar
+  static final GlobalKey<ConvexAppBarState> _appBarKey = GlobalKey<ConvexAppBarState>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,7 @@ class DashboardWargaView extends GetView<DashboardWargaController> {
       child: Scaffold(
         body: Obx(() => _buildPage()),
         bottomNavigationBar: ConvexAppBar(
+          key: _appBarKey, // Tambah key ini
           style: TabStyle.reactCircle,
           items: const [
             TabItem(icon: Icons.home, title: 'Home'),
@@ -35,6 +39,11 @@ class DashboardWargaView extends GetView<DashboardWargaController> {
         ),
       ),
     );
+  }
+  
+  // Tambah static method untuk access dari luar
+  static void animateToIndex(int index) {
+    _appBarKey.currentState?.animateTo(index);
   }
 
   Widget _buildPage() {
