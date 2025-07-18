@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart'; // Tambah import ini
 import 'package:get/get.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/services/dashboard_warga_service.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/home/models/statistics_model.dart';
@@ -7,6 +8,7 @@ import 'package:lapor_md/utils/storage_utils.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/pengaduan_data_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/riwayat/models/statistic_riwayat_data_model.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/views/notifikasi/models/notifikasi_model.dart';
+import 'package:lapor_md/app/modules/dashboard_warga/views/profile/models/profile_model.dart';
 
 class DashboardWargaController extends GetxController {
   // Index untuk bottom navigation
@@ -35,8 +37,8 @@ class DashboardWargaController extends GetxController {
   final Rxn<NotifikasiPaginationModel> notifikasiPagination = Rxn<NotifikasiPaginationModel>();
   final Rxn<NotifikasiStatisticsModel> notifikasiStatistics = Rxn<NotifikasiStatisticsModel>();
   
-  // TODO: Profile data observables
-  // final Rxn<ProfileModel> profileData = Rxn<ProfileModel>();
+  // Profile data observables
+  final Rxn<ProfileModel> profileData = Rxn<ProfileModel>();
 
   @override
   void onInit() {
@@ -217,14 +219,18 @@ class DashboardWargaController extends GetxController {
     try {
       isLoadingProfile.value = true;
       
-      // TODO: Hit API endpoint profile
-      // final result = await DashboardWargaService.fetchProfileData();
+      final result = await DashboardWargaService.fetchProfileData();
       
-      // TODO: Parse dan assign ke profileData
-      // if (result['success'] == true) {
-      //   profileData.value = result['profile'];
-      // }
-      
+      if (result['success'] == true) {
+        final data = result['data'];
+        profileData.value = ProfileModel.fromJson(data);
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message'] ?? 'Gagal memuat data profile',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
     } catch (e) {
       Get.snackbar(
         'Error',
@@ -233,6 +239,69 @@ class DashboardWargaController extends GetxController {
       );
     } finally {
       isLoadingProfile.value = false;
+    }
+  }
+
+  // Method untuk update profile
+  Future<void> updateProfile({
+    required String nama,
+    required String email,
+    required String alamat,
+    required String noTelepon,
+    String? fotoProfil, // tambah foto profile
+  }) async {
+    try {
+      // Show loading
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+      
+      final result = await DashboardWargaService.updateProfileData(
+        nama: nama,
+        email: email,
+        alamat: alamat,
+        noTelepon: noTelepon,
+        fotoProfil: fotoProfil, // tambah foto profile
+      );
+      
+      // Hide loading
+      Get.back();
+      
+      if (result['success'] == true) {
+        // Update local data
+        profileData.value = ProfileModel.fromJson(result['data']);
+        
+        // Refresh data profile dari server
+        await fetchProfileData();
+        
+        Get.snackbar(
+          'Sukses',
+          result['message'] ?? 'Profile berhasil diupdate',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          result['message'] ?? 'Gagal update profile',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      // Hide loading jika ada di stack
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+      
+      Get.snackbar(
+        'Error',
+        'Gagal update profile: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 

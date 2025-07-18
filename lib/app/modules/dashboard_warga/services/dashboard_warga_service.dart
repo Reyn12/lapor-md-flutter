@@ -179,4 +179,103 @@ class DashboardWargaService {
       };
     }
   }
+
+  static Future<Map<String, dynamic>> fetchProfileData() async {
+    try {
+      // Ambil access token dari storage
+      final accessToken = StorageUtils.getValue<String>('access_token');
+      
+      final response = await http.get(
+        Uri.parse(Endpoints.dashboardWargaProfile),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        
+        if (jsonData['success'] == true) {
+          return {
+            'success': true,
+            'data': jsonData['data']['profile'], // Ambil dari nested profile
+          };
+        } else {
+          return {
+            'success': false,
+            'message': 'Data profile tidak berhasil dimuat',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'Server error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
+
+  static Future<Map<String, dynamic>> updateProfileData({
+    required String nama,
+    required String email,
+    required String alamat,
+    required String noTelepon,
+    String? fotoProfil, // tambah foto profile
+  }) async {
+    try {
+      // Ambil access token dari storage
+      final accessToken = StorageUtils.getValue<String>('access_token');
+      
+      final response = await http.put(
+        Uri.parse(Endpoints.dashboardWargaProfileUpdate),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: json.encode({
+          'nama': nama,
+          'no_telepon': noTelepon, // ubah jadi no_telepon
+          'alamat': alamat,
+          'email': email,
+          'foto_profile': fotoProfil ?? '', // tambah foto_profile
+          // hapus nik karena gak ada di body
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = json.decode(response.body);
+        
+        if (jsonData['success'] == true) {
+          return {
+            'success': true,
+            'message': jsonData['message'] ?? 'Profile berhasil diupdate',
+            'data': jsonData['data'],
+          };
+        } else {
+          return {
+            'success': false,
+            'message': jsonData['message'] ?? 'Gagal update profile',
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': 'Server error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
 }
