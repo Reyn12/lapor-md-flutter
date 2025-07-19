@@ -2,8 +2,15 @@ import 'package:get/get.dart';
 // Tambah import untuk access view
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/dashboard_pegawai_view.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/services/dashboard_pegawai_service.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/statistic_pegawai_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_prioritas_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_saya_tangani_model.dart';
 
 class DashboardPegawaiController extends GetxController {
+  // Service
+  final DashboardPegawaiService _service = Get.find<DashboardPegawaiService>();
+
   // Index untuk bottom navigation
   final selectedIndex = 0.obs;
   
@@ -15,6 +22,15 @@ class DashboardPegawaiController extends GetxController {
   
   // User data observables
   final userName = ''.obs;
+  
+  // Statistics data
+  final Rx<StatisticPegawaiModel?> statistics = Rx<StatisticPegawaiModel?>(null);
+  
+  // Pengaduan prioritas data
+  final RxList<PengaduanPrioritasModel> pengaduanPrioritas = <PengaduanPrioritasModel>[].obs;
+  
+  // Pengaduan saya tangani data
+  final RxList<PengaduanSayaTanganiModel> pengaduanSayaTangani = <PengaduanSayaTanganiModel>[].obs;
   
   // Notification data (dummy untuk sekarang)
   final RxList<dynamic> recentNotifikasi = <dynamic>[].obs;
@@ -77,8 +93,15 @@ class DashboardPegawaiController extends GetxController {
     try {
       isLoadingHome.value = true;
       
-      // Simulasi API call
-      await Future.delayed(const Duration(seconds: 1));
+      // Fetch semua data dari service
+      final statisticsData = await _service.fetchStatistics();
+      final pengaduanPrioritasData = await _service.fetchPengaduanPrioritas();
+      final pengaduanSayaTanganiData = await _service.fetchPengaduanSayaTangani();
+      
+      // Update observables
+      statistics.value = statisticsData;
+      pengaduanPrioritas.assignAll(pengaduanPrioritasData);
+      pengaduanSayaTangani.assignAll(pengaduanSayaTanganiData);
       
       // Dummy data notifikasi untuk testing
       recentNotifikasi.value = [
@@ -87,8 +110,10 @@ class DashboardPegawaiController extends GetxController {
         {'id': 3, 'judul': 'Update Status', 'isRead': true},
       ];
       
-      // TODO: Implement actual API call
-      print('Fetching home data for pegawai...');
+      print('Berhasil fetch home data pegawai');
+      print('Statistics: ${statistics.value?.toJson()}');
+      print('Pengaduan Prioritas: ${pengaduanPrioritas.length} items');
+      print('Pengaduan Saya Tangani: ${pengaduanSayaTangani.length} items');
       
     } catch (e) {
       Get.snackbar(
@@ -96,6 +121,7 @@ class DashboardPegawaiController extends GetxController {
         'Terjadi kesalahan: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
+      print('Error fetch home data: $e');
     } finally {
       isLoadingHome.value = false;
     }

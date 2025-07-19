@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_pegawai_controller.dart';
 import 'widgets/w_notification_pegawai.dart';
+import 'widgets/w_statistic_pegawai_card.dart';
+import 'widgets/w_pengaduan_urgent_pegawai_card.dart';
+import 'widgets/w_aktifitas_terbaru_pegawai_card.dart';
 
 class HomePegawaiView extends StatelessWidget {
   const HomePegawaiView({super.key});
@@ -76,12 +79,55 @@ class HomePegawaiView extends StatelessWidget {
                 );
               }
               
-              return const Center(
-                child: Text(
-                  'Home Pegawai - Coming Soon',
-                  style: TextStyle(fontSize: 16),
-                ),
-              );
+              // Tampilkan statistics card atau message jika data belum ada
+              if (controller.statistics.value != null) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Statistics Cards
+                      WStatisticPegawaiCard(
+                        statistics: controller.statistics.value!,
+                      ),
+                      
+                      // Pengaduan Prioritas/Urgent
+                      WPengaduanUrgentPegawaiCard(
+                        pengaduanList: controller.pengaduanPrioritas,
+                        onTap: (pengaduan) {
+                          // TODO: Navigate to detail pengaduan
+                          Get.snackbar(
+                            'Info',
+                            'Akan ke detail pengaduan ${pengaduan.nomorPengaduan}',
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        },
+                      ),
+                      
+                      // Aktivitas Terbaru
+                      WAktifitasTerbaruPegawaiCard(
+                        aktivitasList: controller.pengaduanSayaTangani,
+                        onTap: (aktivitas) {
+                          // TODO: Navigate to detail pengaduan
+                          Get.snackbar(
+                            'Info',
+                            'Akan ke detail pengaduan ${aktivitas.nomorPengaduan}',
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        },
+                      ),
+                      
+                      // Spacing bottom
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                );
+              } else {
+                return const Center(
+                  child: Text(
+                    'Gagal memuat data statistik',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                );
+              }
             }),
           ),
         ],
