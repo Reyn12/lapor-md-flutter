@@ -116,9 +116,6 @@ class HomePegawaiView extends StatelessWidget {
                         },
                       ),
                       
-                      // Logout Button
-                      const WLogoutButton(),
-                      
                       // Spacing bottom
                       const SizedBox(height: 20),
                     ],

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:get/get.dart';
 // Tambah import untuk access view
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/dashboard_pegawai_view.dart';
@@ -6,6 +7,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/services/dashboard_pegawa
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/statistic_pegawai_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_prioritas_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_saya_tangani_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/pengaduan_pegawai_response_model.dart';
 
 class DashboardPegawaiController extends GetxController {
   // Service
@@ -35,6 +37,21 @@ class DashboardPegawaiController extends GetxController {
   // Notification data (dummy untuk sekarang)
   final RxList<dynamic> recentNotifikasi = <dynamic>[].obs;
 
+  // Pengaduan data
+  final Rx<PengaduanPegawaiResponseModel?> pengaduanData = Rx<PengaduanPegawaiResponseModel?>(null);
+  
+  // Filter states
+  final selectedStatus = 'masuk'.obs;
+  final searchQuery = ''.obs;
+  final selectedKategoriId = Rx<int?>(null);
+  final selectedPrioritas = Rx<String?>(null);
+  final tanggalDari = Rx<String?>(null);
+  final tanggalSampai = Rx<String?>(null);
+  final currentPage = 1.obs;
+  
+  // Search debounce timer
+  Timer? _searchTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -50,6 +67,7 @@ class DashboardPegawaiController extends GetxController {
 
   @override
   void onClose() {
+    _searchTimer?.cancel();
     super.onClose();
   }
 
@@ -154,11 +172,47 @@ class DashboardPegawaiController extends GetxController {
     try {
       isLoadingPengaduan.value = true;
       
-      // Simulasi API call
-      await Future.delayed(const Duration(seconds: 1));
+      // Debug token authentication
+      final token = StorageUtils.getValue<String>('access_token');
+      final userData = StorageUtils.getValue<Map<String, dynamic>>('user_data');
+      print('=== DEBUG AUTHENTICATION ===');
+      print('Token tersedia: ${token != null}');
+      print('Token: ${token?.substring(0, 20)}...' ?? 'null');
+      print('User role: ${userData?['role']}');
+      print('User name: ${userData?['nama']}');
+      print('============================');
       
-      // TODO: Implement actual API call
-      // print('Fetching pengaduan data for pegawai...');
+      // Print all storage untuk debug
+      StorageUtils.printAllStorage();
+      
+      // Debug filter values sebelum kirim ke service
+      print('=== DEBUG CONTROLLER FILTERS ===');
+      print('selectedStatus: ${selectedStatus.value}');
+      print('searchQuery: ${searchQuery.value}');
+      print('selectedKategoriId: ${selectedKategoriId.value}');
+      print('selectedPrioritas: ${selectedPrioritas.value}');
+      print('tanggalDari: ${tanggalDari.value}');
+      print('tanggalSampai: ${tanggalSampai.value}');
+      print('==================================');
+
+      // Fetch pengaduan data dari service dengan filter
+      final pengaduanResponse = await _service.fetchPengaduanData(
+        status: selectedStatus.value,
+        search: searchQuery.value,
+        kategoriId: selectedKategoriId.value,
+        prioritas: selectedPrioritas.value,
+        tanggalDari: tanggalDari.value,
+        tanggalSampai: tanggalSampai.value,
+        page: currentPage.value,
+        limit: 10,
+      );
+      
+      // Update observable
+      pengaduanData.value = pengaduanResponse;
+      
+      print('Berhasil fetch pengaduan data pegawai');
+      print('Total pengaduan: ${pengaduanResponse.pengaduan.length}');
+      print('Tab counts: Masuk=${pengaduanResponse.tabCounts.masuk}, Diproses=${pengaduanResponse.tabCounts.diproses}');
       
     } catch (e) {
       Get.snackbar(
@@ -166,9 +220,69 @@ class DashboardPegawaiController extends GetxController {
         'Terjadi kesalahan: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
+      print('Error fetch pengaduan data: $e');
     } finally {
       isLoadingPengaduan.value = false;
     }
+  }
+
+  // Method untuk update filter dan refresh data
+  void updateFilter({
+    String? status,
+    String? search,
+    int? kategoriId,
+    String? prioritas,
+    String? tanggalDari,
+    String? tanggalSampai,
+    bool updateKategoriId = false,
+    bool updatePrioritas = false,
+    bool updateTanggalDari = false,
+    bool updateTanggalSampai = false,
+  }) {
+    print('=== UPDATE FILTER ===');
+    print('kategoriId: $kategoriId, updateKategoriId: $updateKategoriId');
+    print('prioritas: $prioritas, updatePrioritas: $updatePrioritas');
+    
+    // Update observables
+    if (status != null) selectedStatus.value = status;
+    
+    // Handle nullable fields dengan explicit flag
+    if (updateKategoriId) {
+      selectedKategoriId.value = kategoriId;
+      print('Updated selectedKategoriId to: ${selectedKategoriId.value}');
+    }
+    if (updatePrioritas) {
+      selectedPrioritas.value = prioritas;
+      print('Updated selectedPrioritas to: ${selectedPrioritas.value}');
+    }
+    if (updateTanggalDari) {
+      this.tanggalDari.value = tanggalDari;
+    }
+    if (updateTanggalSampai) {
+      this.tanggalSampai.value = tanggalSampai;
+    }
+    
+    // Handle search dengan debounce
+    if (search != null) {
+      searchQuery.value = search;
+      _searchTimer?.cancel();
+      _searchTimer = Timer(const Duration(milliseconds: 500), () {
+        currentPage.value = 1;
+        fetchPengaduanData();
+      });
+    } else {
+      // Reset ke page 1 dan refresh data langsung untuk filter lainnya
+      currentPage.value = 1;
+      fetchPengaduanData();
+    }
+    print('==================');
+  }
+
+  // Method untuk change status tab
+  void changeStatusTab(String status) {
+    selectedStatus.value = status;
+    currentPage.value = 1;
+    fetchPengaduanData();
   }
 
   // Method untuk fetch data profile
