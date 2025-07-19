@@ -5,6 +5,7 @@ import 'widgets/w_notification_pegawai.dart';
 import 'widgets/w_statistic_pegawai_card.dart';
 import 'widgets/w_pengaduan_urgent_pegawai_card.dart';
 import 'widgets/w_aktifitas_terbaru_pegawai_card.dart';
+import 'widgets/w_logout_button.dart';
 
 class HomePegawaiView extends StatelessWidget {
   const HomePegawaiView({super.key});
@@ -114,6 +115,9 @@ class HomePegawaiView extends StatelessWidget {
                           );
                         },
                       ),
+                      
+                      // Logout Button
+                      const WLogoutButton(),
                       
                       // Spacing bottom
                       const SizedBox(height: 20),

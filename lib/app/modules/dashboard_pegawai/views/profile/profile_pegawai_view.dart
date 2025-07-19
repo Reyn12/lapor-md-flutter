@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_pegawai_controller.dart';
+import '../home/widgets/w_logout_button.dart';
 
 class ProfilePegawaiView extends StatelessWidget {
   const ProfilePegawaiView({super.key});
@@ -64,11 +65,8 @@ class ProfilePegawaiView extends StatelessWidget {
                 );
               }
               
-              return const Center(
-                child: Text(
-                  'Profile Pegawai - Coming Soon',
-                  style: TextStyle(fontSize: 16),
-                ),
+              return Center(
+                child: WLogoutButton(),
               );
             }),
           ),
