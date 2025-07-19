@@ -1,10 +1,12 @@
 class TabCountsModel {
   final int masuk;
   final int diproses;
+  final int selesai;
 
   TabCountsModel({
     required this.masuk,
     required this.diproses,
+    required this.selesai,
   });
 
   // Helper untuk safe parsing int dari dynamic (bisa String atau int)
@@ -19,6 +21,7 @@ class TabCountsModel {
     return TabCountsModel(
       masuk: _parseInt(json['masuk']),
       diproses: _parseInt(json['diproses']),
+      selesai: _parseInt(json['selesai']), // API mungkin belum return field ini
     );
   }
 
@@ -26,6 +29,7 @@ class TabCountsModel {
     return {
       'masuk': masuk,
       'diproses': diproses,
+      'selesai': selesai,
     };
   }
 } 

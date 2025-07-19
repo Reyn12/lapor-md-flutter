@@ -178,17 +178,21 @@ class WCardListPengaduan extends StatelessWidget {
                ),
              ),
              
-             // Action Button untuk status masuk
+             // Action Button untuk status masuk (menunggu)
              if (currentStatus == 'masuk')
-               _buildMasukActionSection(pengaduan),
+               _buildMenungguActionSection(pengaduan),
              
              // Catatan Pegawai (hanya untuk status diproses)
              if (currentStatus == 'diproses' && pengaduan.catatanPegawai != null && pengaduan.catatanPegawai!.isNotEmpty)
                _buildCatatanPegawai(pengaduan.catatanPegawai!),
              
-             // Update Status Section (hanya untuk status diproses)
+             // Update Status Section (untuk status diproses)
              if (currentStatus == 'diproses')
                _buildUpdateStatusSection(pengaduan),
+               
+             // Status Selesai - hanya info 
+             if (currentStatus == 'selesai')
+               _buildSelesaiStatusSection(pengaduan),
           ],
         ),
       ),
@@ -287,30 +291,101 @@ class WCardListPengaduan extends StatelessWidget {
     );
   }
 
-  Widget _buildMasukActionSection(PengaduanPegawaiModel pengaduan) {
-    if (!pengaduan.canAccept) return const SizedBox.shrink();
+  Widget _buildMenungguActionSection(PengaduanPegawaiModel pengaduan) {
+    // Debug permissions untuk status menunggu
+    print('=== DEBUG MENUNGGU PERMISSIONS ===');
+    print('Pengaduan: ${pengaduan.nomorPengaduan}');
+    print('canAccept: ${pengaduan.canAccept}');
+    print('canUpdateProgress: ${pengaduan.canUpdateProgress}');
+    print('canComplete: ${pengaduan.canComplete}');
+    print('=================================');
     
+    // Untuk status menunggu, show button Terima atau Tolak
     return Container(
       margin: const EdgeInsets.only(top: 16),
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: () => onActionTap(pengaduan, 'accept'),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF4F46E5),
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+      child: Row(
+        children: [
+          // Button Tolak
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () => onActionTap(pengaduan, 'reject'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFFEF4444),
+                side: const BorderSide(color: Color(0xFFEF4444)),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Tolak',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
-          elevation: 0,
-        ),
-        child: const Text(
-          'Terima',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
+          
+          const SizedBox(width: 12),
+          
+          // Button Terima
+          Expanded(
+            child: ElevatedButton(
+              onPressed: pengaduan.canAccept 
+                  ? () => onActionTap(pengaduan, 'accept')
+                  : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: pengaduan.canAccept 
+                    ? const Color(0xFF4F46E5)
+                    : Colors.grey[400],
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                elevation: 0,
+              ),
+              child: const Text(
+                'Terima',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelesaiStatusSection(PengaduanPegawaiModel pengaduan) {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFECFDF5), // Light green background
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF10B981), width: 1),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.check_circle,
+            color: Color(0xFF10B981),
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'Pengaduan telah selesai',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF047857),
+            ),
+          ),
+        ],
       ),
     );
   }

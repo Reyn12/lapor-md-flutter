@@ -155,7 +155,10 @@ class DashboardPegawaiService extends GetxService {
       print('=== DEBUG RESPONSE ===');
       print('Status: ${response.statusCode}');
       print('Headers: ${response.headers}');
-      print('Body: ${response.body.toString().substring(0, 200)}...');
+      if (response.body != null) {
+        final bodyStr = response.body.toString();
+        print('Body (first 300 chars): ${bodyStr.length > 300 ? bodyStr.substring(0, 300) : bodyStr}...');
+      }
       print('======================');
 
       if (response.statusCode == 200) {
@@ -171,7 +174,7 @@ class DashboardPegawaiService extends GetxService {
           }
           if (data['tab_counts'] != null) {
             print('Tab counts: ${data['tab_counts']}');
-            print('Tab counts types: masuk=${data['tab_counts']['masuk'].runtimeType}, diproses=${data['tab_counts']['diproses'].runtimeType}');
+            print('Tab counts types: menunggu=${data['tab_counts']['masuk'].runtimeType}, diproses=${data['tab_counts']['diproses'].runtimeType}');
           }
           print('===========================');
           

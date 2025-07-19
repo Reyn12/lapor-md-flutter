@@ -41,7 +41,7 @@ class DashboardPegawaiController extends GetxController {
   final Rx<PengaduanPegawaiResponseModel?> pengaduanData = Rx<PengaduanPegawaiResponseModel?>(null);
   
   // Filter states
-  final selectedStatus = 'masuk'.obs;
+  final selectedStatus = 'masuk'.obs; // API expect 'masuk' untuk pengaduan menunggu
   final searchQuery = ''.obs;
   final selectedKategoriId = Rx<int?>(null);
   final selectedPrioritas = Rx<String?>(null);
@@ -172,6 +172,9 @@ class DashboardPegawaiController extends GetxController {
     try {
       isLoadingPengaduan.value = true;
       
+      // Clear existing data untuk avoid confusion
+      pengaduanData.value = null;
+      
       // Debug token authentication
       final token = StorageUtils.getValue<String>('access_token');
       final userData = StorageUtils.getValue<Map<String, dynamic>>('user_data');
@@ -211,8 +214,18 @@ class DashboardPegawaiController extends GetxController {
       pengaduanData.value = pengaduanResponse;
       
       print('Berhasil fetch pengaduan data pegawai');
+      print('Status filter: ${selectedStatus.value}');
       print('Total pengaduan: ${pengaduanResponse.pengaduan.length}');
-      print('Tab counts: Masuk=${pengaduanResponse.tabCounts.masuk}, Diproses=${pengaduanResponse.tabCounts.diproses}');
+      print('Tab counts: Menunggu=${pengaduanResponse.tabCounts.masuk}, Diproses=${pengaduanResponse.tabCounts.diproses}, Selesai=${pengaduanResponse.tabCounts.selesai}');
+      
+      // Debug actual status dari setiap pengaduan
+      if (pengaduanResponse.pengaduan.isNotEmpty) {
+        print('=== PENGADUAN STATUS DEBUG ===');
+        for (var pengaduan in pengaduanResponse.pengaduan) {
+          print('${pengaduan.nomorPengaduan}: status="${pengaduan.status}"');
+        }
+        print('==============================');
+      }
       
     } catch (e) {
       Get.snackbar(
@@ -280,6 +293,11 @@ class DashboardPegawaiController extends GetxController {
 
   // Method untuk change status tab
   void changeStatusTab(String status) {
+    print('=== DEBUG CHANGE STATUS TAB ===');
+    print('From: ${selectedStatus.value}');
+    print('To: $status');
+    print('==============================');
+    
     selectedStatus.value = status;
     currentPage.value = 1;
     fetchPengaduanData();

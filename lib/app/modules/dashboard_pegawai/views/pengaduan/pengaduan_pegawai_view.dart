@@ -48,7 +48,7 @@ class PengaduanPegawaiView extends StatelessWidget {
                 ),
                 SizedBox(height: 4),
                 Text(
-                  'Kelola pengaduan masuk',
+                  'Kelola pengaduan menunggu',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -120,10 +120,53 @@ class PengaduanPegawaiView extends StatelessWidget {
                     }
                     
                     if (pengaduanData.pengaduan.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'Tidak ada pengaduan',
-                          style: TextStyle(fontSize: 16),
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.inbox_outlined,
+                              size: 64,
+                              color: Colors.grey[400],
+                            ),
+                            const SizedBox(height: 16),
+                                                         Obx(() => Text(
+                               'Tidak ada pengaduan untuk status "${controller.selectedStatus.value == 'masuk' ? 'Menunggu' : controller.selectedStatus.value}"',
+                               style: const TextStyle(fontSize: 16, color: Colors.grey),
+                               textAlign: TextAlign.center,
+                             )),
+                          ],
+                        ),
+                      );
+                    }
+                    
+                    // Debug info sebelum render list
+                    print('=== DEBUG RENDER LIST ===');
+                    print('Current selected status: ${controller.selectedStatus.value}');
+                    print('Pengaduan count: ${pengaduanData.pengaduan.length}');
+                    print('Tab counts - Selesai: ${pengaduanData.tabCounts.selesai}');
+                    print('==========================');
+                    
+                    // Special case: Jika tab "Selesai" tapi count 0, force show empty state
+                    if (controller.selectedStatus.value == 'selesai' && 
+                        pengaduanData.tabCounts.selesai == 0) {
+                      print('FORCE EMPTY STATE for Selesai tab with 0 count');
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              size: 64,
+                              color: Colors.green[300],
+                            ),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Belum ada pengaduan yang selesai',
+                              style: TextStyle(fontSize: 16, color: Colors.grey),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -148,6 +191,14 @@ class PengaduanPegawaiView extends StatelessWidget {
                             Get.snackbar(
                               'Info',
                               'Terima pengaduan ${pengaduan.nomorPengaduan}',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                            break;
+                          case 'reject':
+                            // TODO: Implement tolak pengaduan
+                            Get.snackbar(
+                              'Info',
+                              'Tolak pengaduan ${pengaduan.nomorPengaduan}',
                               snackPosition: SnackPosition.BOTTOM,
                             );
                             break;

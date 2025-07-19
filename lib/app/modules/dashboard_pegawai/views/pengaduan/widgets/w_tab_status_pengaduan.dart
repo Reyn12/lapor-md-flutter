@@ -20,17 +20,17 @@ class WTabStatusPengaduan extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Row(
         children: [
-          // Tab Masuk
+          // Tab Menunggu  
           Expanded(
             child: _buildTabItem(
-              label: 'Masuk',
-              count: tabCounts?.masuk ?? 0,
+              label: 'Menunggu',
+              count: tabCounts?.masuk ?? 0, // API return field 'masuk' untuk status menunggu
               isActive: selectedStatus == 'masuk',
-              onTap: () => onTabChanged('masuk'),
+              onTap: () => onTabChanged('masuk'), // Kirim 'masuk' ke API, bukan 'menunggu'
             ),
           ),
           
-          const SizedBox(width: 12),
+          const SizedBox(width: 8),
           
           // Tab Diproses
           Expanded(
@@ -39,6 +39,18 @@ class WTabStatusPengaduan extends StatelessWidget {
               count: tabCounts?.diproses ?? 0,
               isActive: selectedStatus == 'diproses',
               onTap: () => onTabChanged('diproses'),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+          
+          // Tab Selesai
+          Expanded(
+            child: _buildTabItem(
+              label: 'Selesai', 
+              count: tabCounts?.selesai ?? 0, // Dari API response selesai field
+              isActive: selectedStatus == 'selesai',
+              onTap: () => onTabChanged('selesai'),
             ),
           ),
         ],
