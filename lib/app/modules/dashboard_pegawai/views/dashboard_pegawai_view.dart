@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'home/home_pegawai_view.dart';
-import 'laporan/laporan_pegawai_view.dart';
 import 'pengaduan/pengaduan_pegawai_view.dart';
 import 'profile/profile_pegawai_view.dart';
 import '../controllers/dashboard_pegawai_controller.dart';
@@ -32,7 +31,6 @@ class DashboardPegawaiView extends GetView<DashboardPegawaiController> {
           color: Colors.grey[400],
           items: const [
             TabItem(icon: Icons.dashboard, title: 'Home'),
-            TabItem(icon: Icons.assessment, title: 'Laporan'),
             TabItem(icon: Icons.inbox_outlined, title: 'Pengaduan'),
             TabItem(icon: Icons.account_circle, title: 'Profile'),
           ],
@@ -54,10 +52,8 @@ class DashboardPegawaiView extends GetView<DashboardPegawaiController> {
       case 0:
         return const HomePegawaiView();
       case 1:
-        return const LaporanPegawaiView();
-      case 2:
         return const PengaduanPegawaiView();
-      case 3:
+      case 2:
         return const ProfilePegawaiView();
       default:
         return const Center(
