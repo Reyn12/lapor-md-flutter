@@ -15,28 +15,36 @@ class Endpoints {
 
   // Dashboard Warga
   static String get dashboardWargaHome => '$baseUrl/api/warga/home';
-  static String get dashboardWargaBuatPengaduan => '$baseUrl/api/warga/pengaduan';
+  static String get dashboardWargaBuatPengaduan =>
+      '$baseUrl/api/warga/pengaduan';
   static String get dashboardWargaAmbilKategori => '$baseUrl/api/kategori';
 
   // Dashboard Warga - Riwayat
   static String get dashboardWargaRiwayat => '$baseUrl/api/warga/riwayat';
-  static String get dashboardWargaRiwayatDetail => '$baseUrl/api/warga/pengaduan/';
+  static String get dashboardWargaRiwayatDetail =>
+      '$baseUrl/api/warga/pengaduan/';
 
   // Dashboard Warga - Notifikasi
   static String get dashboardWargaNotifikasi => '$baseUrl/api/warga/notifikasi';
 
   // Dashboard Warga - Profile
   static String get dashboardWargaProfile => '$baseUrl/api/warga/profile';
-  static String get dashboardWargaProfileUpdate => '$baseUrl/api/warga/profile/';
+  static String get dashboardWargaProfileUpdate =>
+      '$baseUrl/api/warga/profile/';
 
   // Dashboard Pegawai
   static String get dashboardPegawaiHome => '$baseUrl/api/pegawai/home';
-  static String get dashboardPegawaiPengaduan => '$baseUrl/api/pegawai/pengaduan';
-  static String get dashboardPegawaiPengaduanDetail => '$baseUrl/api/pegawai/pengaduan/';
-  static String dashboardPegawaiPengaduanAccept(int id) => '$baseUrl/api/pegawai/pengaduan/$id/terima';
-  static String dashboardPegawaiPengaduanSelesaikan(int id) => '$baseUrl/api/pegawai/pengaduan/$id/selesai';
+  static String get dashboardPegawaiPengaduan =>
+      '$baseUrl/api/pegawai/pengaduan';
+  static String get dashboardPegawaiPengaduanDetail =>
+      '$baseUrl/api/pegawai/pengaduan/';
+  static String dashboardPegawaiPengaduanAccept(int id) =>
+      '$baseUrl/api/pegawai/pengaduan/$id/terima';
+  static String dashboardPegawaiPengaduanSelesaikan(int id) =>
+      '$baseUrl/api/pegawai/pengaduan/$id/selesai';
   static String get dashboardPegawaiProfile => '$baseUrl/api/pegawai/profile';
 
-  // Dashboard Pegawai - Laporan
-  
+  // Dashboard Kepala Kantor - Home
+  static String get dashboardKepalaKantorHome =>
+      '$baseUrl/api/kepala-kantor/home';
 }

@@ -5,7 +5,6 @@ import 'widgets/w_notification_pegawai.dart';
 import 'widgets/w_statistic_pegawai_card.dart';
 import 'widgets/w_pengaduan_urgent_pegawai_card.dart';
 import 'widgets/w_aktifitas_terbaru_pegawai_card.dart';
-import 'widgets/w_logout_button.dart';
 
 class HomePegawaiView extends StatelessWidget {
   const HomePegawaiView({super.key});
@@ -13,7 +12,7 @@ class HomePegawaiView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<DashboardPegawaiController>();
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: Column(
@@ -54,13 +53,15 @@ class HomePegawaiView extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Obx(() => Text(
-                        'Selamat datang, ${controller.userName.value}',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
+                      Obx(
+                        () => Text(
+                          'Selamat datang, ${controller.userName.value}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
                         ),
-                      )),
+                      ),
                     ],
                   ),
                 ),
@@ -70,16 +71,14 @@ class HomePegawaiView extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Content
           Expanded(
             child: Obx(() {
               if (controller.isLoadingHome.value) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
-              
+
               // Tampilkan statistics card atau message jika data belum ada
               if (controller.statistics.value != null) {
                 return SingleChildScrollView(
@@ -89,7 +88,7 @@ class HomePegawaiView extends StatelessWidget {
                       WStatisticPegawaiCard(
                         statistics: controller.statistics.value!,
                       ),
-                      
+
                       // Pengaduan Prioritas/Urgent
                       WPengaduanUrgentPegawaiCard(
                         pengaduanList: controller.pengaduanPrioritas,
@@ -102,7 +101,7 @@ class HomePegawaiView extends StatelessWidget {
                           );
                         },
                       ),
-                      
+
                       // Aktivitas Terbaru
                       WAktifitasTerbaruPegawaiCard(
                         aktivitasList: controller.pengaduanSayaTangani,
@@ -115,7 +114,7 @@ class HomePegawaiView extends StatelessWidget {
                           );
                         },
                       ),
-                      
+
                       // Spacing bottom
                       const SizedBox(height: 20),
                     ],

@@ -1,12 +1,44 @@
 import 'package:get/get.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/dashboard_kepala_kantor_view.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/services/dashboard_kepala_kantor_service.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/kepala_kantor_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/executive_summary_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
+import 'package:lapor_md/utils/storage_utils.dart';
 
 class DashboardKepalaKantorController extends GetxController {
-  //TODO: Implement DashboardKepalaKantorController
+  // Service instance
+  final DashboardKepalaKantorService _service = DashboardKepalaKantorService();
 
-  final count = 0.obs;
+  // Index untuk bottom navigation
+  final selectedIndex = 0.obs;
+
+  // Loading states per page
+  final isLoadingHome = false.obs;
+  final isLoadingApproval = false.obs;
+  final isLoadingLaporan = false.obs;
+  final isLoadingMonitoring = false.obs;
+  final isLoadingProfile = false.obs;
+
+  // User data observables
+  final userName = ''.obs;
+
+  // Kepala kantor data observable
+  final Rx<KepalaKantorModel?> kepalaKantorData = Rx<KepalaKantorModel?>(null);
+
+  // Executive summary data observable
+  final Rx<ExecutiveSummaryModel?> executiveSummaryData =
+      Rx<ExecutiveSummaryModel?>(null);
+
+  // Grafik bulanan data observable
+  final RxList<PengaduanBulananModel> grafikBulananData =
+      <PengaduanBulananModel>[].obs;
+
   @override
   void onInit() {
     super.onInit();
+    loadPageData(0); // Load home data saat init
+    loadUserData(); // Load user data sekali
   }
 
   @override
@@ -19,5 +51,99 @@ class DashboardKepalaKantorController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  // Method untuk ganti halaman + fetch data yang sesuai
+  void changePage(int index) {
+    selectedIndex.value = index;
+    loadPageData(index);
+
+    // Animate ConvexAppBar ke index yang bener
+    DashboardKepalaKantorView.animateToIndex(index);
+  }
+
+  // Method untuk load data sesuai page yang aktif
+  void loadPageData(int pageIndex) {
+    switch (pageIndex) {
+      case 0:
+        fetchHomeData();
+        break;
+      case 1:
+        fetchApprovalData();
+        break;
+      case 2:
+        fetchLaporanData();
+        break;
+      case 3:
+        fetchMonitoringData();
+        break;
+      case 4:
+        fetchProfileData();
+        break;
+    }
+  }
+
+  // Method untuk load user data dari storage (sekali aja)
+  void loadUserData() {
+    final userData = StorageUtils.getValue<Map<String, dynamic>>('user_data');
+    if (userData != null) {
+      userName.value = userData['nama'] ?? 'Kepala Kantor';
+    }
+  }
+
+  // Fetch methods untuk setiap page
+  void fetchHomeData() async {
+    isLoadingHome.value = true;
+    try {
+      // Fetch kepala kantor data
+      final kepalaKantor = await _service.fetchKepalaKantorData();
+      if (kepalaKantor != null) {
+        kepalaKantorData.value = kepalaKantor;
+      }
+
+      // Fetch executive summary data
+      final executiveSummary = await _service.fetchExecutiveSummaryData();
+      if (executiveSummary != null) {
+        executiveSummaryData.value = executiveSummary;
+      }
+
+      // Fetch grafik bulanan data
+      final grafikBulanan = await _service.fetchGrafikBulananData();
+      grafikBulananData.assignAll(grafikBulanan);
+    } catch (e) {
+      print('Error fetching home data: $e');
+    } finally {
+      isLoadingHome.value = false;
+    }
+  }
+
+  void fetchApprovalData() {
+    isLoadingApproval.value = true;
+    // TODO: Implement approval data fetching
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoadingApproval.value = false;
+    });
+  }
+
+  void fetchLaporanData() {
+    isLoadingLaporan.value = true;
+    // TODO: Implement laporan data fetching
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoadingLaporan.value = false;
+    });
+  }
+
+  void fetchMonitoringData() {
+    isLoadingMonitoring.value = true;
+    // TODO: Implement monitoring data fetching
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoadingMonitoring.value = false;
+    });
+  }
+
+  void fetchProfileData() {
+    isLoadingProfile.value = true;
+    // TODO: Implement profile data fetching
+    Future.delayed(const Duration(milliseconds: 500), () {
+      isLoadingProfile.value = false;
+    });
+  }
 }
