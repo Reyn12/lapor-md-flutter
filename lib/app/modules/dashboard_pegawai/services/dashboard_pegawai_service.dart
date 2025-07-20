@@ -6,6 +6,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengadu
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/pengaduan_pegawai_response_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/detail_pengaduan_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/profile/models/profile_pegawai_model.dart';
 
 class DashboardPegawaiService extends GetxService {
   
@@ -349,6 +350,53 @@ class DashboardPegawaiService extends GetxService {
       
     } catch (e) {
       throw Exception('Gagal selesaikan pengaduan: $e');
+    }
+  }
+
+  // Fetch profile pegawai
+  Future<ProfilePegawaiModel> fetchProfilePegawai() async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+      if (token == null) throw Exception('Token tidak ditemukan');
+      final response = await GetConnect().get(
+        Endpoints.dashboardPegawaiProfile,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        return ProfilePegawaiModel.fromJson(response.body['data']);
+      } else {
+        throw Exception('Gagal ambil profile pegawai');
+      }
+    } catch (e) {
+      throw Exception('Gagal fetch profile pegawai: $e');
+    }
+  }
+
+  // Update profile pegawai
+  Future<ProfilePegawaiModel> updateProfilePegawai(Map<String, dynamic> data) async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+      if (token == null) throw Exception('Token tidak ditemukan');
+      final response = await GetConnect().put(
+        Endpoints.dashboardPegawaiProfile,
+        data,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200 && response.body['success'] == true) {
+        return ProfilePegawaiModel.fromJson(response.body['data']);
+      } else {
+        throw Exception(response.body['message'] ?? 'Gagal update profile pegawai');
+      }
+    } catch (e) {
+      throw Exception('Gagal update profile pegawai: $e');
     }
   }
 }

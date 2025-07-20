@@ -10,6 +10,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengadu
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_saya_tangani_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/pengaduan_pegawai_response_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/detail_pengaduan_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/profile/models/profile_pegawai_model.dart';
 
 class DashboardPegawaiController extends GetxController {
   // Service
@@ -64,6 +65,8 @@ class DashboardPegawaiController extends GetxController {
   // Search debounce timer
   Timer? _searchTimer;
 
+  final Rx<ProfilePegawaiModel?> profilePegawai = Rx<ProfilePegawaiModel?>(null);
+
   @override
   void onInit() {
     super.onInit();
@@ -99,12 +102,9 @@ class DashboardPegawaiController extends GetxController {
         fetchHomeData();
         break;
       case 1:
-        fetchLaporanData();
-        break;
-      case 2:
         fetchPengaduanData();
         break;
-      case 3:
+      case 2:
         fetchProfileData();
         break;
     }
@@ -319,18 +319,42 @@ class DashboardPegawaiController extends GetxController {
   Future<void> fetchProfileData() async {
     try {
       isLoadingProfile.value = true;
-      
-      // Simulasi API call
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // TODO: Implement actual API call
-      // print('Fetching profile data for pegawai...');
-      
+      final data = await _service.fetchProfilePegawai();
+      profilePegawai.value = data;
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal ambil data profile: $e', snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoadingProfile.value = false;
+    }
+  }
+
+  // Method untuk update profile pegawai
+  Future<void> updateProfilePegawai(Map<String, dynamic> data) async {
+    try {
+      isLoadingProfile.value = true;
+      final updated = await _service.updateProfilePegawai(data);
+      profilePegawai.value = updated;
+      Get.back();
+      Get.snackbar(
+        'Berhasil',
+        'Profile berhasil diupdate',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF2563EB),
+        colorText: Colors.white,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        icon: const Icon(Icons.check_circle, color: Colors.white),
+      );
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Terjadi kesalahan: $e',
+        'Gagal update profile: $e',
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        borderRadius: 12,
+        margin: const EdgeInsets.all(16),
+        icon: const Icon(Icons.close_rounded, color: Colors.white),
       );
     } finally {
       isLoadingProfile.value = false;
