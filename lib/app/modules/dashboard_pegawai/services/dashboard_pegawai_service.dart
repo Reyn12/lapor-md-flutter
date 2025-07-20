@@ -4,6 +4,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/statist
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_prioritas_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_saya_tangani_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/pengaduan_pegawai_response_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/detail_pengaduan_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 
 class DashboardPegawaiService extends GetxService {
@@ -188,6 +189,166 @@ class DashboardPegawaiService extends GetxService {
       
     } catch (e) {
       throw Exception('Gagal fetch pengaduan data: $e');
+    }
+  }
+
+  // Method untuk fetch detail pengaduan by ID
+  Future<DetailPengaduanModel> fetchDetailPengaduan(int pengaduanId) async {
+    try {
+      // Ambil token dari storage
+      final token = StorageUtils.getValue<String>('access_token');
+      
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      // Debug request
+      print('=== DEBUG DETAIL PENGADUAN API REQUEST ===');
+      print('URL: ${Endpoints.dashboardPegawaiPengaduanDetail}$pengaduanId');
+      print('Pengaduan ID: $pengaduanId');
+      print('Token (first 20 chars): ${token.substring(0, 20)}...');
+      print('==========================================');
+
+      // Hit API endpoint detail pengaduan
+      final response = await GetConnect().get(
+        '${Endpoints.dashboardPegawaiPengaduanDetail}$pengaduanId',
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('=== DEBUG DETAIL RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      if (response.body != null) {
+        final bodyStr = response.body.toString();
+        print('Body (first 500 chars): ${bodyStr.length > 500 ? bodyStr.substring(0, 500) : bodyStr}...');
+      }
+      print('=============================');
+
+      if (response.statusCode == 200) {
+        final responseData = response.body;
+        
+        if (responseData['success'] == true) {
+          return DetailPengaduanModel.fromJson(responseData['data']);
+        } else {
+          throw Exception('Response tidak sukses');
+        }
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+      
+    } catch (e) {
+      throw Exception('Gagal fetch detail pengaduan: $e');
+    }
+  }
+
+  // Method untuk terima pengaduan by ID
+  Future<Map<String, dynamic>> acceptPengaduan(int pengaduanId) async {
+    try {
+      // Ambil token dari storage
+      final token = StorageUtils.getValue<String>('access_token');
+      
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      // Debug request
+      print('=== DEBUG ACCEPT PENGADUAN API REQUEST ===');
+      print('URL: ${Endpoints.dashboardPegawaiPengaduanAccept(pengaduanId)}');
+      print('Pengaduan ID: $pengaduanId');
+      print('Token (first 20 chars): ${token.substring(0, 20)}...');
+      print('==========================================');
+
+      // Hit API endpoint accept pengaduan dengan POST method
+      final response = await GetConnect().post(
+        Endpoints.dashboardPegawaiPengaduanAccept(pengaduanId),
+        {},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('=== DEBUG ACCEPT RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      if (response.body != null) {
+        final bodyStr = response.body.toString();
+        print('Body (first 500 chars): ${bodyStr.length > 500 ? bodyStr.substring(0, 500) : bodyStr}...');
+      }
+      print('=============================');
+
+      if (response.statusCode == 200) {
+        final responseData = response.body;
+        
+        if (responseData['success'] == true) {
+          return responseData;
+        } else {
+          throw Exception(responseData['message'] ?? 'Response tidak sukses');
+        }
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+      
+    } catch (e) {
+      throw Exception('Gagal terima pengaduan: $e');
+    }
+  }
+
+  // Method untuk selesaikan pengaduan by ID
+  Future<Map<String, dynamic>> completePengaduan(int pengaduanId, String catatanPenyelesaian) async {
+    try {
+      // Ambil token dari storage
+      final token = StorageUtils.getValue<String>('access_token');
+      
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      // Debug request
+      print('=== DEBUG COMPLETE PENGADUAN API REQUEST ===');
+      print('URL: ${Endpoints.dashboardPegawaiPengaduanSelesaikan(pengaduanId)}');
+      print('Pengaduan ID: $pengaduanId');
+      print('Token (first 20 chars): ${token.substring(0, 20)}...');
+      print('============================================');
+
+      // Hit API endpoint complete pengaduan dengan POST method
+      final response = await GetConnect().post(
+        Endpoints.dashboardPegawaiPengaduanSelesaikan(pengaduanId),
+        {
+          'catatan_penyelesaian': catatanPenyelesaian,
+        },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('=== DEBUG COMPLETE RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      if (response.body != null) {
+        final bodyStr = response.body.toString();
+        print('Body (first 500 chars): ${bodyStr.length > 500 ? bodyStr.substring(0, 500) : bodyStr}...');
+      }
+      print('===============================');
+
+      if (response.statusCode == 200) {
+        final responseData = response.body;
+        
+        if (responseData['success'] == true) {
+          return responseData;
+        } else {
+          throw Exception(responseData['message'] ?? 'Response tidak sukses');
+        }
+      } else {
+        throw Exception('HTTP Error: ${response.statusCode}');
+      }
+      
+    } catch (e) {
+      throw Exception('Gagal selesaikan pengaduan: $e');
     }
   }
 }

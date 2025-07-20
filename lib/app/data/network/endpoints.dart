@@ -32,6 +32,9 @@ class Endpoints {
   // Dashboard Pegawai
   static String get dashboardPegawaiHome => '$baseUrl/api/pegawai/home';
   static String get dashboardPegawaiPengaduan => '$baseUrl/api/pegawai/pengaduan';
+  static String get dashboardPegawaiPengaduanDetail => '$baseUrl/api/pegawai/pengaduan/';
+  static String dashboardPegawaiPengaduanAccept(int id) => '$baseUrl/api/pegawai/pengaduan/$id/terima';
+  static String dashboardPegawaiPengaduanSelesaikan(int id) => '$baseUrl/api/pegawai/pengaduan/$id/selesai';
 
   // Dashboard Pegawai - Laporan
   

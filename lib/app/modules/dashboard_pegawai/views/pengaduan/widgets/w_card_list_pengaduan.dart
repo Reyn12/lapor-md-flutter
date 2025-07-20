@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../models/pengaduan_pegawai_model.dart';
+import 'konfirmasiPopup/w_konfirmasi_terima_pengaduan.dart';
+import 'konfirmasiPopup/w_konfirmasi_selesai_pengaduan.dart';
 
 class WCardListPengaduan extends StatelessWidget {
   final List<PengaduanPegawaiModel> pengaduanList;
@@ -305,35 +308,21 @@ class WCardListPengaduan extends StatelessWidget {
       margin: const EdgeInsets.only(top: 16),
       child: Row(
         children: [
-          // Button Tolak
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () => onActionTap(pengaduan, 'reject'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFFEF4444),
-                side: const BorderSide(color: Color(0xFFEF4444)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'Tolak',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          
-          const SizedBox(width: 12),
           
           // Button Terima
           Expanded(
             child: ElevatedButton(
               onPressed: pengaduan.canAccept 
-                  ? () => onActionTap(pengaduan, 'accept')
+                  ? () {
+                      // Buka konfirmasi popup
+                      Get.dialog(
+                        WKonfirmasiTerimaPengaduan(
+                          pengaduanId: pengaduan.id,
+                          nomorPengaduan: pengaduan.nomorPengaduan,
+                          judul: pengaduan.judul,
+                        ),
+                      );
+                    }
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: pengaduan.canAccept 
@@ -441,7 +430,16 @@ class WCardListPengaduan extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: pengaduan.canComplete 
-                      ? () => onActionTap(pengaduan, 'complete')
+                      ? () {
+                          // Buka konfirmasi popup selesai
+                          Get.dialog(
+                            WKonfirmasiSelesaiPengaduan(
+                              pengaduanId: pengaduan.id,
+                              nomorPengaduan: pengaduan.nomorPengaduan,
+                              judul: pengaduan.judul,
+                            ),
+                          );
+                        }
                       : null, // Disable jika tidak bisa complete
                   style: ElevatedButton.styleFrom(
                     backgroundColor: pengaduan.canComplete 

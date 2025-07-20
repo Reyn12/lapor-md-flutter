@@ -4,6 +4,7 @@ import '../../controllers/dashboard_pegawai_controller.dart';
 import 'widgets/w_tab_status_pengaduan.dart';
 import 'widgets/w_search_filter_bar.dart';
 import 'widgets/w_card_list_pengaduan.dart';
+import 'widgets/w_detail_pengaduan.dart';
 
 class PengaduanPegawaiView extends StatelessWidget {
   const PengaduanPegawaiView({super.key});
@@ -176,11 +177,9 @@ class PengaduanPegawaiView extends StatelessWidget {
                       pengaduanList: pengaduanData.pengaduan,
                       currentStatus: controller.selectedStatus.value,
                       onDetailTap: (pengaduan) {
-                        // TODO: Navigate to detail pengaduan
-                        Get.snackbar(
-                          'Info',
-                          'Detail pengaduan ${pengaduan.nomorPengaduan}',
-                          snackPosition: SnackPosition.BOTTOM,
+                        // Buka dialog detail pengaduan
+                        Get.dialog(
+                          WDetailPengaduan(pengaduanId: pengaduan.id),
                         );
                       },
                       onActionTap: (pengaduan, actionType) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // Tambah import untuk access view
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/dashboard_pegawai_view.dart';
@@ -8,6 +9,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/statist
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_prioritas_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/models/pengaduan_saya_tangani_model.dart';
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/pengaduan_pegawai_response_model.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/detail_pengaduan_model.dart';
 
 class DashboardPegawaiController extends GetxController {
   // Service
@@ -39,6 +41,16 @@ class DashboardPegawaiController extends GetxController {
 
   // Pengaduan data
   final Rx<PengaduanPegawaiResponseModel?> pengaduanData = Rx<PengaduanPegawaiResponseModel?>(null);
+  
+  // Detail pengaduan data
+  final Rx<DetailPengaduanModel?> detailPengaduan = Rx<DetailPengaduanModel?>(null);
+  final isLoadingDetailPengaduan = false.obs;
+  
+  // Accept pengaduan
+  final isLoadingAcceptPengaduan = false.obs;
+  
+  // Complete pengaduan
+  final isLoadingCompletePengaduan = false.obs;
   
   // Filter states
   final selectedStatus = 'masuk'.obs; // API expect 'masuk' untuk pengaduan menunggu
@@ -328,5 +340,131 @@ class DashboardPegawaiController extends GetxController {
   // Method untuk refresh data page yang aktif
   Future<void> refreshCurrentPage() async {
     loadPageData(selectedIndex.value);
+  }
+
+  // Method untuk fetch detail pengaduan
+  Future<void> fetchDetailPengaduan(int pengaduanId) async {
+    try {
+      isLoadingDetailPengaduan.value = true;
+      
+      // Clear existing data
+      detailPengaduan.value = null;
+      
+      print('=== DEBUG FETCH DETAIL PENGADUAN ===');
+      print('Pengaduan ID: $pengaduanId');
+      print('====================================');
+      
+      // Fetch detail pengaduan dari service
+      final detailData = await _service.fetchDetailPengaduan(pengaduanId);
+      
+      // Update observable
+      detailPengaduan.value = detailData;
+      
+      print('Berhasil fetch detail pengaduan');
+      print('Nomor Pengaduan: ${detailData.nomorPengaduan}');
+      print('Judul: ${detailData.judul}');
+      print('Status: ${detailData.status}');
+      print('Can Accept: ${detailData.canAccept}');
+      
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      print('Error fetch detail pengaduan: $e');
+    } finally {
+      isLoadingDetailPengaduan.value = false;
+    }
+  }
+
+  // Method untuk terima pengaduan
+  Future<void> acceptPengaduan(int pengaduanId) async {
+    try {
+      isLoadingAcceptPengaduan.value = true;
+      
+      print('=== DEBUG ACCEPT PENGADUAN ===');
+      print('Pengaduan ID: $pengaduanId');
+      print('==============================');
+      
+      // Hit API terima pengaduan
+      final result = await _service.acceptPengaduan(pengaduanId);
+      
+      print('Berhasil terima pengaduan');
+      print('Response: ${result['message']}');
+      
+      // Tutup dialog
+      Get.back(); // Tutup konfirmasi dialog
+      Get.back(); // Tutup detail dialog
+      
+      // Refresh data pengaduan
+      fetchPengaduanData();
+      
+      // Show success message
+      Get.snackbar(
+        'Berhasil',
+        'Pengaduan berhasil diterima dan akan diproses',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF10B981),
+        colorText: Colors.white,
+      );
+      
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal terima pengaduan: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      print('Error accept pengaduan: $e');
+    } finally {
+      isLoadingAcceptPengaduan.value = false;
+    }
+  }
+
+  // Method untuk selesaikan pengaduan
+  Future<void> completePengaduan(int pengaduanId, String catatanPenyelesaian) async {
+    try {
+      isLoadingCompletePengaduan.value = true;
+      
+      print('=== DEBUG COMPLETE PENGADUAN ===');
+      print('Pengaduan ID: $pengaduanId');
+      print('================================');
+      
+      // Hit API selesaikan pengaduan
+      final result = await _service.completePengaduan(pengaduanId, catatanPenyelesaian);
+      
+      print('Berhasil selesaikan pengaduan');
+      print('Response: ${result['message']}');
+      
+      // Tutup dialog
+      Get.back(); // Tutup konfirmasi dialog
+      Get.back(); // Tutup detail dialog (jika ada)
+      
+      // Refresh data pengaduan
+      fetchPengaduanData();
+      
+      // Show success message
+      Get.snackbar(
+        'Berhasil',
+        'Pengaduan telah diselesaikan',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFF059669),
+        colorText: Colors.white,
+      );
+      
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal selesaikan pengaduan: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      print('Error complete pengaduan: $e');
+    } finally {
+      isLoadingCompletePengaduan.value = false;
+    }
   }
 }
