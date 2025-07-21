@@ -67,8 +67,84 @@ class BuatPengaduanWargaController extends GetxController {
 
   Future<void> pickImage() async {
     try {
+      // Tampilkan dialog untuk memilih sumber gambar
+      Get.dialog(
+        Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Pilih Sumber Foto',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildImageSourceOption(
+                      icon: Icons.camera_alt,
+                      label: 'Kamera',
+                      onTap: () => _getImage(ImageSource.camera),
+                    ),
+                    _buildImageSourceOption(
+                      icon: Icons.photo_library,
+                      label: 'Galeri',
+                      onTap: () => _getImage(ImageSource.gallery),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal memilih foto',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Widget _buildImageSourceOption({
+    required IconData icon, 
+    required String label, 
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Color(0xFF8B5CF6).withOpacity(0.1),
+              shape: BoxShape.circle,
+              border: Border.all(color: Color(0xFF8B5CF6).withOpacity(0.3)),
+            ),
+            child: Icon(icon, color: Color(0xFF8B5CF6), size: 32),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Future<void> _getImage(ImageSource source) async {
+    try {
+      Get.back(); // Tutup dialog
       final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1024,
         maxHeight: 1024,
         imageQuality: 85,
@@ -80,7 +156,7 @@ class BuatPengaduanWargaController extends GetxController {
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Gagal memilih foto',
+        'Gagal mengambil foto',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
