@@ -4,6 +4,7 @@ import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/k
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/executive_summary_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/monitoring/models/pengaduan_list_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 
 class DashboardKepalaKantorService extends GetxService {
@@ -189,6 +190,34 @@ class DashboardKepalaKantorService extends GetxService {
         'success': false,
         'message': 'Terjadi kesalahan: $e',
       };
+    }
+  }
+
+  // Fetch monitoring data
+  Future<MonitoringResponseModel?> fetchMonitoringData() async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().get(
+        Endpoints.dashboardKepalaKantorMonitoringData,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return monitoringResponseModelFromJson(response.bodyString!);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching monitoring data: $e');
+      return null;
     }
   }
 }

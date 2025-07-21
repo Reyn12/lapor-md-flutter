@@ -55,7 +55,10 @@ class Endpoints {
   // Dashboard Kepala Kantor - Approval Action
   static String dashboardKepalaKantorApprovalAction(int id) =>
       '$baseUrl/api/kepala-kantor/pengaduan/$id/approve';
-
   static String dashboardKepalaKantorApprovalReject(int id) =>
       '$baseUrl/api/kepala-kantor/pengaduan/$id/reject';
+
+  // Dashboard Kepala Kantor - Monitoring Data
+  static String get dashboardKepalaKantorMonitoringData =>
+      '$baseUrl/api/kepala-kantor/monitoring';
 }

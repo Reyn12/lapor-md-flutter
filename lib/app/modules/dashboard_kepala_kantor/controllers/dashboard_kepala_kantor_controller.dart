@@ -7,6 +7,7 @@ import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/p
 import 'package:lapor_md/app/widgets/loading_dialog.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/monitoring/models/pengaduan_list_model.dart';
 
 class DashboardKepalaKantorController extends GetxController {
   // Service instance
@@ -38,6 +39,9 @@ class DashboardKepalaKantorController extends GetxController {
 
   // Approval data observable
   final RxList<Pengaduan> approvalData = <Pengaduan>[].obs;
+  
+  // Monitoring data observable
+  final Rx<MonitoringResponseModel?> monitoringData = Rx<MonitoringResponseModel?>(null);
 
   @override
   void onInit() {
@@ -142,12 +146,18 @@ class DashboardKepalaKantorController extends GetxController {
     });
   }
 
-  void fetchMonitoringData() {
+  void fetchMonitoringData() async {
     isLoadingMonitoring.value = true;
-    // TODO: Implement monitoring data fetching
-    Future.delayed(const Duration(milliseconds: 500), () {
+    try {
+      final result = await _service.fetchMonitoringData();
+      if (result != null) {
+        monitoringData.value = result;
+      }
+    } catch (e) {
+      print('Error fetching monitoring data: $e');
+    } finally {
       isLoadingMonitoring.value = false;
-    });
+    }
   }
 
   // Approve pengaduan
