@@ -47,4 +47,8 @@ class Endpoints {
   // Dashboard Kepala Kantor - Home
   static String get dashboardKepalaKantorHome =>
       '$baseUrl/api/kepala-kantor/home';
+
+  // Dashboard Kepala Kantor - Approval
+  static String get dashboardKepalaKantorApprovalData =>
+      '$baseUrl/api/kepala-kantor/approval';
 }

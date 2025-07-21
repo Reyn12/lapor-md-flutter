@@ -5,6 +5,7 @@ import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/k
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/executive_summary_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
 
 class DashboardKepalaKantorController extends GetxController {
   // Service instance
@@ -33,6 +34,9 @@ class DashboardKepalaKantorController extends GetxController {
   // Grafik bulanan data observable
   final RxList<PengaduanBulananModel> grafikBulananData =
       <PengaduanBulananModel>[].obs;
+
+  // Approval data observable
+  final RxList<Pengaduan> approvalData = <Pengaduan>[].obs;
 
   @override
   void onInit() {
@@ -115,12 +119,18 @@ class DashboardKepalaKantorController extends GetxController {
     }
   }
 
-  void fetchApprovalData() {
+  void fetchApprovalData() async {
     isLoadingApproval.value = true;
-    // TODO: Implement approval data fetching
-    Future.delayed(const Duration(milliseconds: 500), () {
+    try {
+      final result = await _service.fetchApprovalData();
+      if (result != null) {
+        approvalData.assignAll(result);
+      }
+    } catch (e) {
+      print('Error fetching approval data: $e');
+    } finally {
       isLoadingApproval.value = false;
-    });
+    }
   }
 
   void fetchLaporanData() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_kepala_kantor_controller.dart';
+import 'widgets/list_pengaduan_approval_card.dart';
 
 class ApprovalKepalaKantorView extends StatelessWidget {
   const ApprovalKepalaKantorView({super.key});
@@ -73,16 +74,66 @@ class ApprovalKepalaKantorView extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }
-              return const Center(
-                child: Text(
-                  'Approval Kepala Kantor Content',
-                  style: TextStyle(fontSize: 20),
-                ),
+
+              if (controller.approvalData.isEmpty) {
+                return const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.inbox_outlined,
+                        size: 64,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 16),
+                      Text(
+                        'Tidak ada pengaduan yang perlu approval',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: controller.approvalData.length,
+                itemBuilder: (context, index) {
+                  final pengaduan = controller.approvalData[index];
+                  return ListPengaduanApprovalCard(
+                    pengaduan: pengaduan,
+                    onAction: (id, action, catatan) {
+                      _handleAction(controller, id, action, catatan);
+                    },
+                  );
+                },
               );
             }),
           ),
         ],
       ),
     );
+  }
+
+  void _handleAction(DashboardKepalaKantorController controller, int id, String action, String? catatan) {
+    // TODO: Implementasi approve/reject pengaduan API call
+    String message = action == 'approve' 
+        ? 'Pengaduan berhasil disetujui' 
+        : 'Pengaduan ditolak';
+    
+    Get.snackbar(
+      action == 'approve' ? 'Berhasil' : 'Ditolak',
+      message,
+      backgroundColor: action == 'approve' ? Colors.green : Colors.red,
+      colorText: Colors.white,
+    );
+    
+    // Refresh data setelah approve/reject
+    controller.fetchApprovalData();
+    
+    print('Action: $action, ID: $id, Catatan: $catatan');
   }
 }

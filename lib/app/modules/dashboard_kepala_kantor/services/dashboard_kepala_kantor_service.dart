@@ -3,6 +3,7 @@ import 'package:lapor_md/app/data/network/endpoints.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/kepala_kantor_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/executive_summary_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 
 class DashboardKepalaKantorService extends GetxService {
@@ -81,6 +82,33 @@ class DashboardKepalaKantorService extends GetxService {
     } catch (e) {
       print('Error parsing grafik bulanan data: $e');
       return [];
+    }
+  }
+
+  Future<List<Pengaduan>?> fetchApprovalData() async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().get(
+        Endpoints.dashboardKepalaKantorApprovalData,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return pengaduanListFromJson(response.bodyString!);
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching approval data: $e');
+      return null;
     }
   }
 }

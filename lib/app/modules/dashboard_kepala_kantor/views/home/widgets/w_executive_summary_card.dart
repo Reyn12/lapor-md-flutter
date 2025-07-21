@@ -56,7 +56,7 @@ class WExecutiveSummaryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Divider(color: Colors.grey[700], thickness: 1),
+            Divider(color: Colors.grey[700]?.withOpacity(0.5), thickness: 1),
             // Grid Cards
             Obx(() {
               final executiveData = controller.executiveSummaryData.value;
@@ -127,7 +127,6 @@ class WExecutiveSummaryCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!isCategory) ...[
             Text(

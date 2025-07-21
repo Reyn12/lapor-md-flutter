@@ -67,6 +67,8 @@ class AppPages {
       name: _Paths.DASHBOARD_KEPALA_KANTOR,
       page: () => const DashboardKepalaKantorView(),
       binding: DashboardKepalaKantorBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
       name: _Paths.BUAT_PENGADUAN_WARGA,
