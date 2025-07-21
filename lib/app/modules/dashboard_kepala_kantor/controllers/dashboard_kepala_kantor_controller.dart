@@ -8,6 +8,8 @@ import 'package:lapor_md/app/widgets/loading_dialog.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/monitoring/models/pengaduan_list_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/profile/models/kepala_kantor_model.dart' as profile;
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/laporan/models/laporan_model.dart' as laporan;
 
 class DashboardKepalaKantorController extends GetxController {
   // Service instance
@@ -22,6 +24,9 @@ class DashboardKepalaKantorController extends GetxController {
   final isLoadingLaporan = false.obs;
   final isLoadingMonitoring = false.obs;
   final isLoadingProfile = false.obs;
+
+  // Observable untuk data laporan
+  final laporanData = Rxn<laporan.LaporanModel>();
 
   // User data observables
   final userName = ''.obs;
@@ -42,6 +47,9 @@ class DashboardKepalaKantorController extends GetxController {
   
   // Monitoring data observable
   final Rx<MonitoringResponseModel?> monitoringData = Rx<MonitoringResponseModel?>(null);
+
+  // Profile data observable
+  final Rx<profile.KepalaKantorModel?> profileData = Rx<profile.KepalaKantorModel?>(null);
 
   @override
   void onInit() {
@@ -138,12 +146,18 @@ class DashboardKepalaKantorController extends GetxController {
     }
   }
 
-  void fetchLaporanData() {
+  void fetchLaporanData() async {
     isLoadingLaporan.value = true;
-    // TODO: Implement laporan data fetching
-    Future.delayed(const Duration(milliseconds: 500), () {
+    try {
+      final result = await _service.fetchLaporanData();
+      if (result != null) {
+        laporanData.value = result;
+      }
+    } catch (e) {
+      print('Error fetching laporan data: $e');
+    } finally {
       isLoadingLaporan.value = false;
-    });
+    }
   }
 
   void fetchMonitoringData() async {
@@ -213,11 +227,64 @@ class DashboardKepalaKantorController extends GetxController {
     }
   }
 
-  void fetchProfileData() {
+  void fetchProfileData() async {
     isLoadingProfile.value = true;
-    // TODO: Implement profile data fetching
-    Future.delayed(const Duration(milliseconds: 500), () {
+    try {
+      final result = await _service.fetchProfileData();
+      if (result != null) {
+        profileData.value = result;
+      }
+    } catch (e) {
+      print('Error fetching profile data: $e');
+    } finally {
       isLoadingProfile.value = false;
-    });
+    }
+  }
+  
+  // Update profile data
+  Future<Map<String, dynamic>> updateProfileData({
+    required String nama,
+    required String email,
+    required String noTelepon,
+    required String alamat,
+    required String password,
+  }) async {
+    showLoading();
+    try {
+      final result = await _service.updateProfileData(
+        nama: nama,
+        email: email,
+        noTelepon: noTelepon,
+        alamat: alamat,
+        password: password,
+      );
+      
+      hideLoading();
+      
+      if (result['success']) {
+        // Refresh profile data setelah update
+        fetchProfileData();
+        
+        // Update juga nama di userName observable
+        userName.value = nama;
+        
+        // Update user_data di storage
+        final userData = StorageUtils.getValue<Map<String, dynamic>>('user_data');
+        if (userData != null) {
+          userData['nama'] = nama;
+          userData['email'] = email;
+          await StorageUtils.setValue('user_data', userData);
+        }
+      }
+      
+      return result;
+    } catch (e) {
+      hideLoading();
+      print('Error updating profile data: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat update profile',
+      };
+    }
   }
 }

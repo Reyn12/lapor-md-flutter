@@ -5,6 +5,8 @@ import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/e
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/monitoring/models/pengaduan_list_model.dart';
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/profile/models/kepala_kantor_model.dart' as profile;
+import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/laporan/models/laporan_model.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 
 class DashboardKepalaKantorService extends GetxService {
@@ -217,6 +219,117 @@ class DashboardKepalaKantorService extends GetxService {
       return null;
     } catch (e) {
       print('Error fetching monitoring data: $e');
+      return null;
+    }
+  }
+  
+  // Fetch profile data
+  Future<profile.KepalaKantorModel?> fetchProfileData() async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().get(
+        Endpoints.dashboardKepalaKantorProfile,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.body;
+        if (data['success'] == true && data['data'] != null) {
+          return profile.KepalaKantorModel.fromJson(data['data']);
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching profile data: $e');
+      return null;
+    }
+  }
+  
+  // Update profile data
+  Future<Map<String, dynamic>> updateProfileData({
+    required String nama,
+    required String email,
+    required String noTelepon,
+    required String alamat,
+    required String password,
+  }) async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().put(
+        Endpoints.dashboardKepalaKantorProfile,
+        {
+          'nama': nama,
+          'email': email,
+          'no_telepon': noTelepon,
+          'alamat': alamat,
+          'password': password,
+        },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.body;
+        return {
+          'success': data['success'] ?? false,
+          'message': data['message'] ?? 'Berhasil update profile',
+          'data': data['data'],
+        };
+      }
+      return {
+        'success': false,
+        'message': response.body['message'] ?? 'Gagal update profile',
+      };
+    } catch (e) {
+      print('Error updating profile data: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
+  
+  // Fetch laporan executive data
+  Future<LaporanModel?> fetchLaporanData() async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+      if (token == null) throw Exception('Token tidak ditemukan');
+      
+      final response = await GetConnect().get(
+        Endpoints.dashboardKepalaKantorLaporan,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+      
+      if (response.statusCode == 200) {
+        final data = response.body;
+        if (data['success'] == true && data['data'] != null) {
+          return LaporanModel.fromJson(data['data']);
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error fetching laporan data: $e');
       return null;
     }
   }

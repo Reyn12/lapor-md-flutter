@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_kepala_kantor_controller.dart';
+import 'widgets/w_card_profile.dart';
+import 'widgets/w_edit_profile.dart';
+import '../../../dashboard_pegawai/views/home/widgets/w_logout_button.dart';
 
 class ProfileKepalaKantorView extends StatelessWidget {
   const ProfileKepalaKantorView({super.key});
@@ -73,10 +76,22 @@ class ProfileKepalaKantorView extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }
-              return const Center(
-                child: Text(
-                  'Profile Kepala Kantor Content',
-                  style: TextStyle(fontSize: 20),
+              return SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Column(
+                  children: [
+                    CardProfile(
+                      profileData: controller.profileData.value,
+                      isLoading: false,
+                    ),
+                    const SizedBox(height: 20),
+                    EditProfileButton(
+                      profileData: controller.profileData.value,
+                    ),
+                    const SizedBox(height: 16),
+                    const WLogoutButton(),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               );
             }),

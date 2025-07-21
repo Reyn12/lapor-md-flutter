@@ -61,4 +61,12 @@ class Endpoints {
   // Dashboard Kepala Kantor - Monitoring Data
   static String get dashboardKepalaKantorMonitoringData =>
       '$baseUrl/api/kepala-kantor/monitoring';
+
+  // Dashboard Kepala Kantor - Laporan
+  static String get dashboardKepalaKantorLaporan =>
+      '$baseUrl/api/kepala-kantor/laporan';
+
+  // Dashboard Kepala Kantor - Profile
+  static String get dashboardKepalaKantorProfile =>
+      '$baseUrl/api/kepala-kantor/profile';
 }

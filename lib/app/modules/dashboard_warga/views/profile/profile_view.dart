@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lapor_md/app/modules/dashboard_warga/controllers/dashboard_warga_controller.dart';
 import 'widgets/w_header.dart';
+import 'package:lapor_md/app/modules/dashboard_pegawai/views/home/widgets/w_logout_button.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -208,6 +209,11 @@ class ProfileView extends StatelessWidget {
                           ),
                         ),
                       ),
+                      
+                      const SizedBox(height: 16),
+                      
+                      // Logout Button
+                      const WLogoutButton(),
                     ],
                   ),
                 ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/dashboard_kepala_kantor_controller.dart';
+import 'widgets/w_card_laporan_executive.dart';
 
 class LaporanKepalaKantorView extends StatelessWidget {
   const LaporanKepalaKantorView({super.key});
@@ -67,19 +68,17 @@ class LaporanKepalaKantorView extends StatelessWidget {
 
           // Content
           Expanded(
-            child: Obx(() {
-              if (controller.isLoadingLaporan.value) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return const Center(
-                child: Text(
-                  'Laporan Kepala Kantor Content',
-                  style: TextStyle(fontSize: 20),
-                ),
-              );
-            }),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Obx(() {
+                  return WCardLaporanExecutive(
+                    laporanData: controller.laporanData.value,
+                    isLoading: controller.isLoadingLaporan.value,
+                  );
+                }),
+              ),
+            ),
           ),
         ],
       ),
