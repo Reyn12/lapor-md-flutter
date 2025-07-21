@@ -111,4 +111,84 @@ class DashboardKepalaKantorService extends GetxService {
       return null;
     }
   }
+
+  // Approve pengaduan
+  Future<Map<String, dynamic>> approvePengaduan(int id, String catatan) async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().post(
+        Endpoints.dashboardKepalaKantorApprovalAction(id),
+        {
+          'catatan': catatan,
+        },
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': response.body['message'] ?? 'Pengaduan berhasil disetujui',
+        };
+      }
+      return {
+        'success': false,
+        'message': response.body['message'] ?? 'Gagal menyetujui pengaduan',
+      };
+    } catch (e) {
+      print('Error approving pengaduan: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
+
+  // Reject pengaduan
+  Future<Map<String, dynamic>> rejectPengaduan(int id, String? catatan) async {
+    try {
+      final token = StorageUtils.getValue<String>('access_token');
+
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await GetConnect().post(
+        Endpoints.dashboardKepalaKantorApprovalReject(id),
+        catatan != null && catatan.isNotEmpty ? {
+          'catatan': catatan,
+        } : {},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': response.body['message'] ?? 'Pengaduan berhasil ditolak',
+        };
+      }
+      return {
+        'success': false,
+        'message': response.body['message'] ?? 'Gagal menolak pengaduan',
+      };
+    } catch (e) {
+      print('Error rejecting pengaduan: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan: $e',
+      };
+    }
+  }
 }

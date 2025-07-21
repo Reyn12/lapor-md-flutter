@@ -4,6 +4,7 @@ import 'package:lapor_md/app/modules/dashboard_kepala_kantor/services/dashboard_
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/kepala_kantor_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/executive_summary_model.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/home/models/pengaduan_bulanan.dart';
+import 'package:lapor_md/app/widgets/loading_dialog.dart';
 import 'package:lapor_md/utils/storage_utils.dart';
 import 'package:lapor_md/app/modules/dashboard_kepala_kantor/views/approval/models/pengaduan_model.dart';
 
@@ -147,6 +148,59 @@ class DashboardKepalaKantorController extends GetxController {
     Future.delayed(const Duration(milliseconds: 500), () {
       isLoadingMonitoring.value = false;
     });
+  }
+
+  // Approve pengaduan
+  Future<Map<String, dynamic>> approvePengaduan(int id, String? catatan) async {
+    showLoading();
+    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      if (catatan == null || catatan.isEmpty) {
+        hideLoading();
+        return {'success': false, 'message': 'Catatan approval wajib diisi'};
+      }
+
+      final result = await _service.approvePengaduan(id, catatan);
+
+      if (result['success']) {
+        // Refresh data setelah approve
+        hideLoading();
+        fetchApprovalData();
+      }
+
+      return result;
+    } catch (e) {
+      hideLoading();
+      print('Error approving pengaduan: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat menyetujui pengaduan',
+      };
+    }
+  }
+
+  // Reject pengaduan
+  Future<Map<String, dynamic>> rejectPengaduan(int id, String? catatan) async {
+    showLoading();
+    await Future.delayed(const Duration(milliseconds: 500));
+    try {
+      final result = await _service.rejectPengaduan(id, catatan);
+
+      if (result['success']) {
+        // Refresh data setelah reject
+        hideLoading();
+        fetchApprovalData();
+      }
+
+      return result;
+    } catch (e) {
+      hideLoading();
+      print('Error rejecting pengaduan: $e');
+      return {
+        'success': false,
+        'message': 'Terjadi kesalahan saat menolak pengaduan',
+      };
+    }
   }
 
   void fetchProfileData() {

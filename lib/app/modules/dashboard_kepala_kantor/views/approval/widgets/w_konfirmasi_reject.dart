@@ -120,7 +120,7 @@ class WKonfirmasiReject extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Alasan Penolakan (Wajib):',
+                          'Alasan Penolakan (Opsional):',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -191,21 +191,11 @@ class WKonfirmasiReject extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        if (catatanController.text.trim().isEmpty) {
-                          Get.snackbar(
-                            'Perhatian',
-                            'Alasan penolakan wajib diisi',
-                            backgroundColor: Colors.amber,
-                            colorText: Colors.white,
-                          );
-                          return;
-                        }
-                        
                         // Return result with action and catatan
                         Get.back(result: {
                           'action': 'reject',
                           'id': pengaduanId,
-                          'catatan': catatanController.text,
+                          'catatan': catatanController.text.trim().isEmpty ? null : catatanController.text,
                         });
                       },
                       style: ElevatedButton.styleFrom(

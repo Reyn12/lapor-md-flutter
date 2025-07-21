@@ -118,22 +118,63 @@ class ApprovalKepalaKantorView extends StatelessWidget {
     );
   }
 
-  void _handleAction(DashboardKepalaKantorController controller, int id, String action, String? catatan) {
-    // TODO: Implementasi approve/reject pengaduan API call
-    String message = action == 'approve' 
-        ? 'Pengaduan berhasil disetujui' 
-        : 'Pengaduan ditolak';
-    
-    Get.snackbar(
-      action == 'approve' ? 'Berhasil' : 'Ditolak',
-      message,
-      backgroundColor: action == 'approve' ? Colors.green : Colors.red,
-      colorText: Colors.white,
+  void _handleAction(DashboardKepalaKantorController controller, int id, String action, String? catatan) async {
+    // Tampilkan loading dialog
+    Get.dialog(
+      const Center(
+        child: CircularProgressIndicator(),
+      ),
+      barrierDismissible: false,
     );
     
-    // Refresh data setelah approve/reject
-    controller.fetchApprovalData();
-    
-    print('Action: $action, ID: $id, Catatan: $catatan');
+    try {
+      Map<String, dynamic> result;
+      
+      if (action == 'approve') {
+        // Untuk approve, catatan wajib diisi
+        if (catatan == null || catatan.isEmpty) {
+          // Tutup loading dialog
+          Get.back();
+          
+          Get.snackbar(
+            'Perhatian',
+            'Catatan approval wajib diisi',
+            backgroundColor: Colors.amber,
+            colorText: Colors.white,
+          );
+          return;
+        }
+        result = await controller.approvePengaduan(id, catatan);
+      } else {
+        // Untuk reject, catatan opsional
+        result = await controller.rejectPengaduan(id, catatan);
+      }
+      
+      // Tutup loading dialog
+      Get.back();
+      
+      // Tampilkan snackbar hasil
+      Get.snackbar(
+        result['success'] ? (action == 'approve' ? 'Berhasil' : 'Ditolak') : 'Gagal',
+        result['message'],
+        backgroundColor: result['success'] 
+            ? (action == 'approve' ? Colors.green : Colors.red)
+            : Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      
+    } catch (e) {
+      // Tutup loading dialog
+      Get.back();
+      
+      // Tampilkan error
+      Get.snackbar(
+        'Error',
+        'Terjadi kesalahan: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 }

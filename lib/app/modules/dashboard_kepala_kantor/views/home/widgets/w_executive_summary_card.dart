@@ -151,8 +151,8 @@ class WExecutiveSummaryCard extends StatelessWidget {
             isCategory ? value : title,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isCategory ? 12 : 12,
-              fontWeight: isCategory ? FontWeight.w600 : FontWeight.w500,
+              fontSize: isCategory ? 18 : 12,
+              fontWeight: isCategory ? FontWeight.bold : FontWeight.w500,
               height: 1.2,
             ),
           ),

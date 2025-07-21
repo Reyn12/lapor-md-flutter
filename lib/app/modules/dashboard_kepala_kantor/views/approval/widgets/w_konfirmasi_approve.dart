@@ -121,7 +121,7 @@ class WKonfirmasiApprove extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Catatan (Opsional):',
+                          'Catatan Approval (Wajib):',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -192,11 +192,20 @@ class WKonfirmasiApprove extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Implement approve action
+                        if (catatanController.text.trim().isEmpty) {
+                          Get.snackbar(
+                            'Perhatian',
+                            'Catatan approval wajib diisi',
+                            backgroundColor: Colors.amber,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+                        
                         Get.back(result: {
                           'action': 'approve',
                           'id': pengaduanId,
-                          'catatan': catatanController.text.isEmpty ? null : catatanController.text,
+                          'catatan': catatanController.text,
                         });
                       },
                       style: ElevatedButton.styleFrom(
