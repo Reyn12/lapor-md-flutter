@@ -133,11 +133,17 @@ class DashboardKepalaKantorController extends GetxController {
   }
 
   void fetchApprovalData() async {
+    print('=== CONTROLLER: FETCHING APPROVAL DATA ===');
     isLoadingApproval.value = true;
     try {
       final result = await _service.fetchApprovalData();
+      print('=== CONTROLLER: SERVICE RESULT: $result ===');
       if (result != null) {
+        print('=== CONTROLLER: ASSIGNING ${result.length} items ===');
         approvalData.assignAll(result);
+        print('=== CONTROLLER: APPROVAL DATA SIZE: ${approvalData.length} ===');
+      } else {
+        print('=== CONTROLLER: SERVICE RETURNED NULL ===');
       }
     } catch (e) {
       print('Error fetching approval data: $e');

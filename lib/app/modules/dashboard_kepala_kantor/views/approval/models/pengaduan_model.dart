@@ -10,14 +10,14 @@ class Pengaduan {
   int id;
   String nomorPengaduan;
   String judul;
-  String status;
-  String prioritas;
+  String status; // Optional field - default 'perlu_approval'
+  String prioritas; // Optional field - default 'normal' 
   String kategori;
   String wargaNama;
   String pegawaiNama;
   String lokasi;
   DateTime tanggalPengaduan;
-  String estimasiBiaya;
+  String estimasiBiaya; // Optional field - default '-'
   String rekomendasi;
   String deskripsiLengkap;
   DateTime createdAt;
@@ -26,33 +26,31 @@ class Pengaduan {
     required this.id,
     required this.nomorPengaduan,
     required this.judul,
-    required this.status,
-    required this.prioritas,
+    this.status = 'perlu_approval', // Default value
+    this.prioritas = 'normal', // Default value
     required this.kategori,
     required this.wargaNama,
     required this.pegawaiNama,
     required this.lokasi,
     required this.tanggalPengaduan,
-    required this.estimasiBiaya,
+    this.estimasiBiaya = '-', // Default value
     required this.rekomendasi,
     required this.deskripsiLengkap,
     required this.createdAt,
   });
 
   factory Pengaduan.fromJson(Map<String, dynamic> json) => Pengaduan(
-        id: json["id"],
-        nomorPengaduan: json["nomor_pengaduan"],
-        judul: json["judul"],
-        status: json["status"],
-        prioritas: json["prioritas"],
-        kategori: json["kategori"],
-        wargaNama: json["warga_nama"],
-        pegawaiNama: json["pegawai_nama"],
-        lokasi: json["lokasi"],
+        id: json["id"] ?? 0,
+        nomorPengaduan: json["nomor_pengaduan"] ?? '',
+        judul: json["judul"] ?? '',
+        // status, prioritas, estimasiBiaya akan pakai default value dari constructor
+        kategori: json["kategori"] ?? '',
+        wargaNama: json["warga_nama"] ?? '',
+        pegawaiNama: json["pegawai_nama"] ?? '',
+        lokasi: json["lokasi"] ?? '',
         tanggalPengaduan: DateTime.parse(json["tanggal_pengaduan"]),
-        estimasiBiaya: json["estimasi_biaya"],
-        rekomendasi: json["rekomendasi"],
-        deskripsiLengkap: json["deskripsi_lengkap"],
+        rekomendasi: json["rekomendasi"] ?? '',
+        deskripsiLengkap: json["deskripsi_lengkap"] ?? '',
         createdAt: DateTime.parse(json["created_at"]),
       );
 

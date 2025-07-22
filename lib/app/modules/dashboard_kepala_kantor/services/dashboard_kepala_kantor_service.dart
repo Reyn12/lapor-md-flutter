@@ -105,8 +105,20 @@ class DashboardKepalaKantorService extends GetxService {
         },
       );
 
+      print('=== DEBUG APPROVAL RESPONSE ===');
+      print('Status Code: ${response.statusCode}');
+      print('Response Body: ${response.bodyString}');
+      print('==============================');
+
       if (response.statusCode == 200) {
-        return pengaduanListFromJson(response.bodyString!);
+        try {
+          final result = pengaduanListFromJson(response.bodyString!);
+          print('=== PARSING SUCCESS: ${result.length} items ===');
+          return result;
+        } catch (e) {
+          print('=== PARSING ERROR: $e ===');
+          return null;
+        }
       }
       return null;
     } catch (e) {

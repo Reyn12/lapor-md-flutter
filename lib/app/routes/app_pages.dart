@@ -62,6 +62,8 @@ class AppPages {
       name: _Paths.DASHBOARD_PEGAWAI,
       page: () => const DashboardPegawaiView(),
       binding: DashboardPegawaiBinding(),
+      transition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 300),
     ),
     GetPage(
       name: _Paths.DASHBOARD_KEPALA_KANTOR,

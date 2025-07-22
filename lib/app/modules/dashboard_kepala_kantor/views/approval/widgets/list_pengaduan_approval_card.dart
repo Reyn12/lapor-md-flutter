@@ -80,17 +80,6 @@ class ListPengaduanApprovalCard extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            const SizedBox(height: 8),
-
-            // Estimasi biaya
-            Text(
-              pengaduan.estimasiBiaya,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
             const SizedBox(height: 16),
 
             // Detail Review
@@ -212,23 +201,7 @@ class ListPengaduanApprovalCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.monetization_on,
-                        size: 16,
-                        color: Colors.brown,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Estimasi Biaya: ${pengaduan.estimasiBiaya}',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.brown,
-                        ),
-                      ),
-                    ],
-                  ),
+
                 ],
               ),
             ),
