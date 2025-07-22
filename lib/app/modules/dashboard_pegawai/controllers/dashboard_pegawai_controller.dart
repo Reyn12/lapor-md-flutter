@@ -491,4 +491,51 @@ class DashboardPegawaiController extends GetxController {
       isLoadingCompletePengaduan.value = false;
     }
   }
+
+  // Loading state untuk ajukan approval
+  final isLoadingAjukanApproval = false.obs;
+  
+  // Method untuk ajukan approval pengaduan
+  Future<void> ajukanApprovalPengaduan(int pengaduanId) async {
+    try {
+      print('=== CONTROLLER: START ===');
+      isLoadingAjukanApproval.value = true;
+      
+      print('=== CONTROLLER: CALLING SERVICE ===');
+      await _service.ajukanApprovalPengaduan(pengaduanId);
+      
+      print('=== CONTROLLER: SERVICE DONE, SHOWING SNACKBAR ===');
+      Get.snackbar(
+        'Berhasil',
+        'Pengaduan berhasil diajukan untuk approval',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      
+      print('=== CONTROLLER: REFRESHING DATA ===');
+      // Refresh data pengaduan setelah berhasil
+      await fetchPengaduanData();
+      
+      print('=== CONTROLLER: REFRESHING DETAIL ===');
+      // Refresh detail pengaduan jika ada
+      if (detailPengaduan.value?.id == pengaduanId) {
+        await fetchDetailPengaduan(pengaduanId);
+      }
+      
+      print('=== CONTROLLER: SUCCESS COMPLETE ===');
+      
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Gagal ajukan approval: $e',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      print('Error ajukan approval: $e');
+    } finally {
+      isLoadingAjukanApproval.value = false;
+    }
+  }
 }

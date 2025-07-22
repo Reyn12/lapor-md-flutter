@@ -1,5 +1,5 @@
 class Endpoints {
-  static const String baseUrl = 'http://192.168.18.77:8000';
+  static const String baseUrl = 'http://192.168.1.8:8000';
 
   // ifconfig en0
   // 192.168.18.77
@@ -40,6 +40,8 @@ class Endpoints {
       '$baseUrl/api/pegawai/pengaduan/';
   static String dashboardPegawaiPengaduanAccept(int id) =>
       '$baseUrl/api/pegawai/pengaduan/$id/terima';
+  static String dashboardPegawaiAjukanApproval(int id) =>
+      '$baseUrl/api/pegawai/pengaduan/$id/ajukan-approval';
   static String dashboardPegawaiPengaduanSelesaikan(int id) =>
       '$baseUrl/api/pegawai/pengaduan/$id/selesai';
   static String get dashboardPegawaiProfile => '$baseUrl/api/pegawai/profile';

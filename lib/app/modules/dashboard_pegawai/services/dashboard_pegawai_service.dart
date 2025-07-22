@@ -399,4 +399,58 @@ class DashboardPegawaiService extends GetxService {
       throw Exception('Gagal update profile pegawai: $e');
     }
   }
+
+  // Method untuk ajukan approval pengaduan
+  Future<Map<String, dynamic>> ajukanApprovalPengaduan(int pengaduanId) async {
+    try {
+      // Ambil token dari storage
+      final token = StorageUtils.getValue<String>('access_token');
+      
+      if (token == null) {
+        throw Exception('Token tidak ditemukan');
+      }
+
+      // Debug request
+      print('=== DEBUG AJUKAN APPROVAL API REQUEST ===');
+      print('URL: ${Endpoints.dashboardPegawaiAjukanApproval(pengaduanId)}');
+      print('Pengaduan ID: $pengaduanId');
+      print('Token (first 20 chars): ${token.substring(0, 20)}...');
+      print('==========================================');
+
+      // Hit API endpoint ajukan approval dengan POST method
+      final response = await GetConnect().post(
+        Endpoints.dashboardPegawaiAjukanApproval(pengaduanId),
+        {},
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      print('=== DEBUG AJUKAN APPROVAL RESPONSE ===');
+      print('Status: ${response.statusCode}');
+      if (response.body != null) {
+        final bodyStr = response.body.toString();
+        print('Body (first 500 chars): ${bodyStr.length > 500 ? bodyStr.substring(0, 500) : bodyStr}...');
+      }
+      print('======================================');
+
+      if (response.statusCode == 200) {
+        final responseData = response.body;
+        
+        if (responseData['success'] == true) {
+          return responseData;
+        } else {
+          throw Exception(responseData['message'] ?? 'Response tidak sukses');
+        }
+      } else {
+        final errorBody = response.body;
+        throw Exception(errorBody['message'] ?? 'HTTP Error: ${response.statusCode}');
+      }
+      
+    } catch (e) {
+      throw Exception('Gagal ajukan approval pengaduan: $e');
+    }
+  }
 }

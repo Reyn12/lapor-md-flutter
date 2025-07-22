@@ -13,6 +13,7 @@ class DetailPengaduanModel {
   final bool canAccept;
   final bool canUpdateProgress;
   final bool canComplete;
+  final bool canRequestApproval;
 
   DetailPengaduanModel({
     required this.id,
@@ -29,6 +30,7 @@ class DetailPengaduanModel {
     required this.canAccept,
     required this.canUpdateProgress,
     required this.canComplete,
+    required this.canRequestApproval,
   });
 
   factory DetailPengaduanModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class DetailPengaduanModel {
       canAccept: json['can_accept'] ?? false,
       canUpdateProgress: json['can_update_progress'] ?? false,
       canComplete: json['can_complete'] ?? false,
+      canRequestApproval: json['can_request_approval'] ?? false,
     );
   }
 
@@ -66,6 +69,7 @@ class DetailPengaduanModel {
       'can_accept': canAccept,
       'can_update_progress': canUpdateProgress,
       'can_complete': canComplete,
+      'can_request_approval': canRequestApproval,
     };
   }
 }

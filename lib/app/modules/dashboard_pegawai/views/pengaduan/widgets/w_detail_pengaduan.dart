@@ -4,6 +4,7 @@ import 'package:lapor_md/app/modules/dashboard_pegawai/controllers/dashboard_peg
 import 'package:lapor_md/app/modules/dashboard_pegawai/views/pengaduan/models/detail_pengaduan_model.dart';
 import 'konfirmasiPopup/w_konfirmasi_terima_pengaduan.dart';
 import 'konfirmasiPopup/w_konfirmasi_selesai_pengaduan.dart';
+import 'konfirmasiPopup/w_konfirmasi_ajukan_approval.dart';
 
 class WDetailPengaduan extends StatelessWidget {
   final int pengaduanId;
@@ -448,6 +449,41 @@ class WDetailPengaduan extends StatelessWidget {
                ),
               child: const Text(
                 'Selesaikan Pengaduan',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        
+        if (detail.canRequestApproval) ...[
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                // Buka konfirmasi popup ajukan approval
+                Get.dialog(
+                  WKonfirmasiAjukanApproval(
+                    pengaduanId: detail.id,
+                    nomorPengaduan: detail.nomorPengaduan,
+                    judul: detail.judul,
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ).copyWith(
+                backgroundColor: MaterialStateProperty.all(Colors.orange),
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+              ),
+              child: const Text(
+                'Ajukan Approval',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,

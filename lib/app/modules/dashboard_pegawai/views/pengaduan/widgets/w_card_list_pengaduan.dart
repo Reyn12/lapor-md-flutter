@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../models/pengaduan_pegawai_model.dart';
 import 'konfirmasiPopup/w_konfirmasi_terima_pengaduan.dart';
 import 'konfirmasiPopup/w_konfirmasi_selesai_pengaduan.dart';
+import 'konfirmasiPopup/w_konfirmasi_ajukan_approval.dart';
 
 class WCardListPengaduan extends StatelessWidget {
   final List<PengaduanPegawaiModel> pengaduanList;
@@ -192,7 +193,14 @@ class WCardListPengaduan extends StatelessWidget {
              // Update Status Section (untuk status diproses)
              if (currentStatus == 'diproses')
                _buildUpdateStatusSection(pengaduan),
-               
+                            // Status Menunggu Approval
+              if (pengaduan.status == 'perlu_approval')
+                _buildMenungguApprovalSection(pengaduan),
+              
+              // Status Disetujui
+              if (pengaduan.status == 'disetujui')
+                _buildDisetujuiSection(pengaduan),
+                
              // Status Selesai - hanya info 
              if (currentStatus == 'selesai')
                _buildSelesaiStatusSection(pengaduan),
@@ -402,31 +410,69 @@ class WCardListPengaduan extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              // Button Update Progress - hanya jika canUpdateProgress
-              if (pengaduan.canUpdateProgress)
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => onActionTap(pengaduan, 'update_progress'),
-                    icon: const Icon(Icons.edit_outlined, size: 16),
-                    label: const Text('Update Progress'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.black87,
-                      side: const BorderSide(color: Colors.grey),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+          // Baris pertama: Update Progress dan Ajukan Approval (jika ada)
+          if (pengaduan.canUpdateProgress || pengaduan.canRequestApproval)
+            Row(
+              children: [
+                // Button Update Progress - hanya jika canUpdateProgress
+                if (pengaduan.canUpdateProgress)
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => onActionTap(pengaduan, 'update_progress'),
+                      icon: const Icon(Icons.edit_outlined, size: 16),
+                      label: const Text('Update Progress'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.black87,
+                        side: const BorderSide(color: Colors.grey),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              
-              // Spacing jika ada kedua button
-              if (pengaduan.canUpdateProgress)
-                const SizedBox(width: 12),
-              
-              // Button Selesai - selalu muncul untuk status diproses
+                
+                // Spacing jika ada kedua button
+                if (pengaduan.canUpdateProgress && pengaduan.canRequestApproval)
+                  const SizedBox(width: 12),
+                
+                // Button Ajukan Approval - hanya jika canRequestApproval
+                if (pengaduan.canRequestApproval)
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Buka konfirmasi popup ajukan approval
+                        Get.dialog(
+                          WKonfirmasiAjukanApproval(
+                            pengaduanId: pengaduan.id,
+                            nomorPengaduan: pengaduan.nomorPengaduan,
+                            judul: pengaduan.judul,
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.approval_outlined, size: 16),
+                      label: const Text('Ajukan Approval'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          
+          // Spacing antara baris
+          if (pengaduan.canUpdateProgress || pengaduan.canRequestApproval)
+            const SizedBox(height: 8),
+          
+          // Baris kedua: Button Selesai
+          Row(
+            children: [
               Expanded(
                 child: ElevatedButton(
                   onPressed: pengaduan.canComplete 
@@ -538,6 +584,66 @@ class WCardListPengaduan extends StatelessWidget {
           color: textColor,
           fontWeight: FontWeight.w500,
         ),
+      ),
+    );
+  }
+
+  Widget _buildMenungguApprovalSection(PengaduanPegawaiModel pengaduan) {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF3C7), // Light yellow background
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFFF59E0B), width: 1),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.access_time,
+            color: Color(0xFFF59E0B),
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'Menunggu approval kepala kantor',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFFA16207),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDisetujuiSection(PengaduanPegawaiModel pengaduan) {
+    return Container(
+      margin: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFDCFDF7), // Light teal background
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: const Color(0xFF10B981), width: 1),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.verified,
+            color: Color(0xFF10B981),
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          const Text(
+            'Progress di setujui kepala kantor',
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF047857),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }

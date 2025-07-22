@@ -15,6 +15,7 @@ class PengaduanPegawaiModel {
   final bool canAccept;
   final bool canUpdateProgress;
   final bool canComplete;
+  final bool canRequestApproval;
   final String tanggalPengaduan;
   final String? tanggalProses;
   final String createdAt;
@@ -35,6 +36,7 @@ class PengaduanPegawaiModel {
     required this.canAccept,
     required this.canUpdateProgress,
     required this.canComplete,
+    required this.canRequestApproval,
     required this.tanggalPengaduan,
     this.tanggalProses,
     required this.createdAt,
@@ -74,6 +76,7 @@ class PengaduanPegawaiModel {
       canAccept: _parseBool(json['can_accept']),
       canUpdateProgress: _parseBool(json['can_update_progress']),
       canComplete: _parseBool(json['can_complete']),
+      canRequestApproval: _parseBool(json['can_request_approval']),
       tanggalPengaduan: json['tanggal_pengaduan']?.toString() ?? '',
       tanggalProses: json['tanggal_proses']?.toString(),
       createdAt: json['created_at']?.toString() ?? '',
@@ -97,6 +100,7 @@ class PengaduanPegawaiModel {
       'can_accept': canAccept,
       'can_update_progress': canUpdateProgress,
       'can_complete': canComplete,
+      'can_request_approval': canRequestApproval,
       'tanggal_pengaduan': tanggalPengaduan,
       'tanggal_proses': tanggalProses,
       'created_at': createdAt,
