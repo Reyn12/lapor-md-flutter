@@ -277,6 +277,7 @@ class ProfileView extends StatelessWidget {
   void _showEditDialog(BuildContext context, DashboardWargaController controller, profile) {
     final namaController = TextEditingController(text: profile.nama);
     final emailController = TextEditingController(text: profile.email);
+    final nikController = TextEditingController(text: profile.nik ?? '');
     final alamatController = TextEditingController(text: profile.alamat);
     final teleponController = TextEditingController(text: profile.noTelepon);
 
@@ -361,6 +362,15 @@ class ProfileView extends StatelessWidget {
                   const SizedBox(height: 16),
                   
                   _buildModernTextField(
+                    label: 'NIK',
+                    controller: nikController,
+                    icon: Icons.badge_outlined,
+                    keyboardType: TextInputType.number,
+                    maxLength: 16,
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  _buildModernTextField(
                     label: 'Alamat',
                     controller: alamatController,
                     icon: Icons.home_outlined,
@@ -421,6 +431,7 @@ class ProfileView extends StatelessWidget {
                               // Validasi input
                               if (namaController.text.isEmpty ||
                                   emailController.text.isEmpty ||
+                                  nikController.text.isEmpty ||
                                   alamatController.text.isEmpty ||
                                   teleponController.text.isEmpty) {
                                 Get.snackbar(
@@ -431,10 +442,21 @@ class ProfileView extends StatelessWidget {
                                 return;
                               }
                               
+                              // Validasi NIK 16 karakter
+                              if (nikController.text.length != 16) {
+                                Get.snackbar(
+                                  'Error',
+                                  'NIK harus 16 karakter',
+                                  snackPosition: SnackPosition.BOTTOM,
+                                );
+                                return;
+                              }
+                              
                               Get.back();
                               controller.updateProfile(
                                 nama: namaController.text,
                                 email: emailController.text,
+                                nik: nikController.text,
                                 alamat: alamatController.text,
                                 noTelepon: teleponController.text,
                               );
@@ -474,6 +496,7 @@ class ProfileView extends StatelessWidget {
     required IconData icon,
     TextInputType? keyboardType,
     int maxLines = 1,
+    int? maxLength,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,6 +520,7 @@ class ProfileView extends StatelessWidget {
             controller: controller,
             keyboardType: keyboardType,
             maxLines: maxLines,
+            maxLength: maxLength,
             decoration: InputDecoration(
               prefixIcon: Icon(
                 icon,

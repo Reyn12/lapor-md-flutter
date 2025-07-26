@@ -225,6 +225,7 @@ class DashboardWargaService {
   static Future<Map<String, dynamic>> updateProfileData({
     required String nama,
     required String email,
+    required String nik,
     required String alamat,
     required String noTelepon,
     String? fotoProfil, // tambah foto profile
@@ -233,7 +234,8 @@ class DashboardWargaService {
       // Ambil access token dari storage
       final accessToken = StorageUtils.getValue<String>('access_token');
       
-      final response = await http.put(
+      final client = http.Client();
+      final response = await client.put(
         Uri.parse(Endpoints.dashboardWargaProfileUpdate),
         headers: {
           'Content-Type': 'application/json',
@@ -242,11 +244,11 @@ class DashboardWargaService {
         },
         body: json.encode({
           'nama': nama,
-          'no_telepon': noTelepon, // ubah jadi no_telepon
-          'alamat': alamat,
           'email': email,
-          'foto_profile': fotoProfil ?? '', // tambah foto_profile
-          // hapus nik karena gak ada di body
+          'nik': nik,
+          'alamat': alamat,
+          'no_telepon': noTelepon,
+          'foto_profile': fotoProfil ?? '',
         }),
       );
 

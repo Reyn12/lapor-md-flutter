@@ -251,6 +251,7 @@ class DashboardWargaController extends GetxController {
   Future<void> updateProfile({
     required String nama,
     required String email,
+    required String nik,
     required String alamat,
     required String noTelepon,
     String? fotoProfil, // tambah foto profile
@@ -269,6 +270,7 @@ class DashboardWargaController extends GetxController {
       final result = await DashboardWargaService.updateProfileData(
         nama: nama,
         email: email,
+        nik: nik,
         alamat: alamat,
         noTelepon: noTelepon,
         fotoProfil: fotoProfil, // tambah foto profile

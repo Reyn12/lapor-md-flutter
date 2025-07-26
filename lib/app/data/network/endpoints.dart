@@ -29,8 +29,7 @@ class Endpoints {
 
   // Dashboard Warga - Profile
   static String get dashboardWargaProfile => '$baseUrl/api/warga/profile';
-  static String get dashboardWargaProfileUpdate =>
-      '$baseUrl/api/warga/profile/';
+  static String get dashboardWargaProfileUpdate => '$baseUrl/api/warga/profile';
 
   // Dashboard Pegawai
   static String get dashboardPegawaiHome => '$baseUrl/api/pegawai/home';
