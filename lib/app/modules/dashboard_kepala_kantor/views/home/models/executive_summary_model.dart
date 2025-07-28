@@ -2,23 +2,17 @@ class KategoriTrendingModel {
   final String nama;
   final int total;
 
-  KategoriTrendingModel({
-    required this.nama,
-    required this.total,
-  });
+  KategoriTrendingModel({required this.nama, required this.total});
 
   factory KategoriTrendingModel.fromJson(Map<String, dynamic> json) {
     return KategoriTrendingModel(
       nama: json['nama'] ?? '',
-      total: json['total'] ?? 0,
+      total: _parseToInt(json['total']),
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'nama': nama,
-      'total': total,
-    };
+    return {'nama': nama, 'total': total};
   }
 }
 
@@ -37,9 +31,9 @@ class ExecutiveSummaryModel {
 
   factory ExecutiveSummaryModel.fromJson(Map<String, dynamic> json) {
     return ExecutiveSummaryModel(
-      totalPengaduanBulanIni: json['total_pengaduan_bulan_ini'] ?? 0,
+      totalPengaduanBulanIni: _parseToInt(json['total_pengaduan_bulan_ini']),
       tingkatPenyelesaian: (json['tingkat_penyelesaian'] ?? 0).toDouble(),
-      rataRataWaktuProses: json['rata_rata_waktu_proses'] ?? 0,
+      rataRataWaktuProses: _parseToInt(json['rata_rata_waktu_proses']),
       kategoriTrending: KategoriTrendingModel.fromJson(
         json['kategori_trending'] ?? {},
       ),
@@ -54,4 +48,14 @@ class ExecutiveSummaryModel {
       'kategori_trending': kategoriTrending.toJson(),
     };
   }
+}
+
+// Helper function untuk parse ke int
+int _parseToInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is String) {
+    return int.tryParse(value) ?? 0;
+  }
+  return 0;
 }
