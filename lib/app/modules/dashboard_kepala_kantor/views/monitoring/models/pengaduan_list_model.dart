@@ -55,9 +55,15 @@ class RealTimeStats {
   });
 
   factory RealTimeStats.fromJson(Map<String, dynamic> json) => RealTimeStats(
-        totalPengaduanAllTime: json['total_pengaduan_all_time'] ?? 0,
-        pengaduanAktif: json['pengaduan_aktif'] ?? 0,
-        performancePegawai: json['performance_pegawai'] ?? 0,
+        totalPengaduanAllTime: (json['total_pengaduan_all_time'] ?? 0) is int
+            ? json['total_pengaduan_all_time']
+            : (json['total_pengaduan_all_time'] ?? 0).toDouble().toInt(),
+        pengaduanAktif: (json['pengaduan_aktif'] ?? 0) is int
+            ? json['pengaduan_aktif']
+            : (json['pengaduan_aktif'] ?? 0).toDouble().toInt(),
+        performancePegawai: (json['performance_pegawai'] ?? 0) is int
+            ? json['performance_pegawai']
+            : (json['performance_pegawai'] ?? 0).toDouble().toInt(),
       );
 }
 
@@ -92,7 +98,7 @@ class MonitoringPengaduan {
 
   factory MonitoringPengaduan.fromJson(Map<String, dynamic> json) =>
       MonitoringPengaduan(
-        id: json['id'] ?? 0,
+        id: (json['id'] ?? 0) is int ? json['id'] : (json['id'] ?? 0).toDouble().toInt(),
         nomorPengaduan: json['nomor_pengaduan'] ?? '',
         judul: json['judul'] ?? '',
         status: json['status'] ?? '',
@@ -122,7 +128,7 @@ class PengaduanProgress {
 
   factory PengaduanProgress.fromJson(Map<String, dynamic> json) =>
       PengaduanProgress(
-        persentase: json['persentase'] ?? 0,
+        persentase: (json['persentase'] ?? 0) is int ? json['persentase'] : (json['persentase'] ?? 0).toDouble().toInt(),
         statusText: json['status_text'] ?? '',
       );
 }
@@ -141,9 +147,9 @@ class PaginationInfo {
   });
 
   factory PaginationInfo.fromJson(Map<String, dynamic> json) => PaginationInfo(
-        currentPage: json['current_page'] ?? 1,
-        totalPages: json['total_pages'] ?? 1,
-        totalItems: json['total_items'] ?? 0,
-        perPage: json['per_page'] ?? 10,
+        currentPage: (json['current_page'] ?? 1) is int ? json['current_page'] : (json['current_page'] ?? 1).toDouble().toInt(),
+        totalPages: (json['total_pages'] ?? 1) is int ? json['total_pages'] : (json['total_pages'] ?? 1).toDouble().toInt(),
+        totalItems: (json['total_items'] ?? 0) is int ? json['total_items'] : (json['total_items'] ?? 0).toDouble().toInt(),
+        perPage: (json['per_page'] ?? 10) is int ? json['per_page'] : (json['per_page'] ?? 10).toDouble().toInt(),
       );
 }

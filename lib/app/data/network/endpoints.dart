@@ -4,6 +4,12 @@ class Endpoints {
   // ifconfig en0
   // 192.168.18.77
 
+  // local server
+  // 127.0.0.1
+
+  // production server
+  // https://lapormd.my.id
+
   // laravel server
   // php artisan serve --host=0.0.0.0
 

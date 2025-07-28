@@ -94,11 +94,11 @@ class HomePegawaiView extends StatelessWidget {
                         pengaduanList: controller.pengaduanPrioritas,
                         onTap: (pengaduan) {
                           // TODO: Navigate to detail pengaduan
-                          Get.snackbar(
-                            'Info',
-                            'Akan ke detail pengaduan ${pengaduan.nomorPengaduan}',
-                            snackPosition: SnackPosition.BOTTOM,
-                          );
+                          // Get.snackbar(
+                          //   'Info',
+                          //   'Akan ke detail pengaduan ${pengaduan.nomorPengaduan}',
+                          //   snackPosition: SnackPosition.BOTTOM,
+                          // );
                         },
                       ),
 

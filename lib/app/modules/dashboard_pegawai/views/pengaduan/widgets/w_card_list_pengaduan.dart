@@ -410,64 +410,40 @@ class WCardListPengaduan extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          // Baris pertama: Update Progress dan Ajukan Approval (jika ada)
-          if (pengaduan.canUpdateProgress || pengaduan.canRequestApproval)
+          // Button Ajukan Approval (jika ada)
+          if (pengaduan.canRequestApproval)
             Row(
               children: [
-                // Button Update Progress - hanya jika canUpdateProgress
-                if (pengaduan.canUpdateProgress)
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => onActionTap(pengaduan, 'update_progress'),
-                      icon: const Icon(Icons.edit_outlined, size: 16),
-                      label: const Text('Update Progress'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.black87,
-                        side: const BorderSide(color: Colors.grey),
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Buka konfirmasi popup ajukan approval
+                      Get.dialog(
+                        WKonfirmasiAjukanApproval(
+                          pengaduanId: pengaduan.id,
+                          nomorPengaduan: pengaduan.nomorPengaduan,
+                          judul: pengaduan.judul,
                         ),
+                      );
+                    },
+                    icon: const Icon(Icons.approval_outlined, size: 16),
+                    label: const Text('Ajukan Approval'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
                       ),
+                      elevation: 0,
                     ),
                   ),
-                
-                // Spacing jika ada kedua button
-                if (pengaduan.canUpdateProgress && pengaduan.canRequestApproval)
-                  const SizedBox(width: 12),
-                
-                // Button Ajukan Approval - hanya jika canRequestApproval
-                if (pengaduan.canRequestApproval)
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Buka konfirmasi popup ajukan approval
-                        Get.dialog(
-                          WKonfirmasiAjukanApproval(
-                            pengaduanId: pengaduan.id,
-                            nomorPengaduan: pengaduan.nomorPengaduan,
-                            judul: pengaduan.judul,
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.approval_outlined, size: 16),
-                      label: const Text('Ajukan Approval'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.orange,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        elevation: 0,
-                      ),
-                    ),
-                  ),
+                ),
               ],
             ),
           
-          // Spacing antara baris
-          if (pengaduan.canUpdateProgress || pengaduan.canRequestApproval)
+          // Spacing sebelum button selesai
+          if (pengaduan.canRequestApproval)
             const SizedBox(height: 8),
           
           // Baris kedua: Button Selesai

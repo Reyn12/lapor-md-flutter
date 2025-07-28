@@ -391,38 +391,7 @@ class WDetailPengaduan extends StatelessWidget {
           const SizedBox(height: 8),
         ],
         
-        if (detail.canUpdateProgress) ...[
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement update progress
-                Get.snackbar(
-                  'Info',
-                  'Fitur update progress belum tersedia',
-                  snackPosition: SnackPosition.BOTTOM,
-                );
-              },
-                             style: ElevatedButton.styleFrom(
-                 padding: const EdgeInsets.symmetric(vertical: 14),
-                 shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(8),
-                 ),
-               ).copyWith(
-                 backgroundColor: MaterialStateProperty.all(const Color(0xFF3B82F6)),
-                 foregroundColor: MaterialStateProperty.all(Colors.white),
-               ),
-              child: const Text(
-                'Update Progress',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
+
         
         if (detail.canComplete) ...[
           SizedBox(

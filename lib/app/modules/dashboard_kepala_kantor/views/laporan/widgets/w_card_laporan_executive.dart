@@ -29,8 +29,6 @@ class WCardLaporanExecutive extends StatelessWidget {
         _buildTemplateLaporanSection(),
         const SizedBox(height: 24),
         _buildDashboardAnalyticsSection(),
-        const SizedBox(height: 24),
-        _buildExportOptionsSection(),
       ],
     );
   }
@@ -375,94 +373,6 @@ class WCardLaporanExecutive extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _buildExportOptionsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Opsi Ekspor',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: _buildExportButton(
-                icon: Icons.picture_as_pdf,
-                label: 'Ekspor PDF',
-                color: Colors.red,
-                onTap: () {
-                  Get.snackbar(
-                    'Info',
-                    'Fitur export PDF akan segera tersedia',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.black87,
-                    colorText: Colors.white,
-                    duration: const Duration(seconds: 2),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildExportButton(
-                icon: Icons.table_chart,
-                label: 'Ekspor Excel',
-                color: Colors.green,
-                onTap: () {
-                  Get.snackbar(
-                    'Info',
-                    'Fitur export Excel akan segera tersedia',
-                    snackPosition: SnackPosition.BOTTOM,
-                    backgroundColor: Colors.black87,
-                    colorText: Colors.white,
-                    duration: const Duration(seconds: 2),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildExportButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: Colors.white),
-            const SizedBox(width: 10),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
